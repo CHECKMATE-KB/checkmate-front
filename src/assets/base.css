@@ -60,6 +60,7 @@
 
 body {
   min-height: 100vh;
+  width:max-content;
   color: var(--color-text);
   background: var(--color-background);
   transition:

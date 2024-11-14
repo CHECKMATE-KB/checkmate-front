@@ -1,20 +1,14 @@
 <template>
   <div class="quiz-container">
-    <div class="overlay"></div>
-    <div class="timer-bar">
-      <div class="timer-progress" :style="{ width: timerWidth }"></div>
-    </div>
-    <h1 class="question-text">Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.</h1>
+    <h1 class="question-text">{{ currentQuestion.text }}</h1>
     <div class="options">
       <div class="option">
-        <button @click="selectAnswer('O')" :class="{'selected': selectedAnswer === 'O'}">
-          <span class="option-number">1</span>
+        <button @click="selectAnswer('O')" :class="{ 'selected': selectedAnswer === 'O' }">
           <span class="option-text">O</span>
         </button>
       </div>
       <div class="option">
-        <button @click="selectAnswer('X')" :class="{'selected': selectedAnswer === 'X'}">
-          <span class="option-number">2</span>
+        <button @click="selectAnswer('X')" :class="{ 'selected': selectedAnswer === 'X' }">
           <span class="option-text">X</span>
         </button>
       </div>
@@ -24,34 +18,56 @@
 </template>
 
 <script>
-import { useRouter } from 'vue-router';
+import { ref, computed, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
-  data() {
-    return {
-      selectedAnswer: null, // 선택된 답안
-      timerWidth: '20%', // 타이머 바의 진행률 (예시로 20% 설정)
-    };
-  },
   setup() {
+    const route = useRoute();
     const router = useRouter();
-    return { router };
-  },
-  methods: {
-    selectAnswer(answer) {
-      this.selectedAnswer = answer; // 답안 선택
-    },
-    goToResultPage() {
-      if (this.selectedAnswer) {
-        // 선택된 답안을 쿼리 파라미터로 전달하여 결과 페이지로 이동
-        this.router.push({ name: 'result', query: { answer: this.selectedAnswer } });
+    const questions = [
+      { text: 'Q1. 경제심리지수는 기업과 소비자를 포함하여 사용된다.', answer: 'O' },
+      { text: 'Q2. 틀린 그림 찾기 게임은 재미있다.', answer: 'X' },
+    ];
+
+    const currentQuestionIndex = ref(0);
+    const selectedAnswer = ref(null);
+
+    watch(
+        () => route.query.questionIndex,
+        (newIndex) => {
+          currentQuestionIndex.value = parseInt(newIndex) || 0;
+        },
+        { immediate: true }
+    );
+
+    const currentQuestion = computed(() => questions[currentQuestionIndex.value]);
+
+    const selectAnswer = (answer) => {
+      selectedAnswer.value = answer;
+    };
+
+    const goToResultPage = () => {
+      if (selectedAnswer.value) {
+        router.push({
+          name: 'result',
+          query: { answer: selectedAnswer.value, questionIndex: currentQuestionIndex.value },
+        });
       } else {
-        alert("답안을 선택해 주세요!"); // 답안이 선택되지 않았을 때 경고 메시지
+        alert("답안을 선택해 주세요!");
       }
-    },
+    };
+
+    return {
+      currentQuestion,
+      selectAnswer,
+      goToResultPage,
+      selectedAnswer,
+    };
   },
 };
 </script>
+
 
 <style scoped>
 .quiz-container {

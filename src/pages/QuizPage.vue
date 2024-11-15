@@ -1,14 +1,20 @@
 <template>
   <div class="quiz-container">
+    <div class="overlay"></div>
+    <div class="timer-bar">
+      <div class="timer-progress" :style="{ width: timerWidth + '%' }"></div>
+    </div>
     <h1 class="question-text">{{ currentQuestion.text }}</h1>
     <div class="options">
       <div class="option">
         <button @click="selectAnswer('O')" :class="{ 'selected': selectedAnswer === 'O' }">
+          <span class="option-number">1</span>
           <span class="option-text">O</span>
         </button>
       </div>
       <div class="option">
         <button @click="selectAnswer('X')" :class="{ 'selected': selectedAnswer === 'X' }">
+          <span class="option-number">2</span>
           <span class="option-text">X</span>
         </button>
       </div>
@@ -18,7 +24,7 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 export default {
@@ -26,12 +32,13 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const questions = [
-      { text: 'Q1. 경제심리지수는 기업과 소비자를 포함하여 사용된다.', answer: 'O' },
+      { text: 'Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.', answer: 'O' },
       { text: 'Q2. 틀린 그림 찾기 게임은 재미있다.', answer: 'X' },
     ];
 
     const currentQuestionIndex = ref(0);
     const selectedAnswer = ref(null);
+    const timerWidth = ref(100);
 
     watch(
         () => route.query.questionIndex,
@@ -58,16 +65,31 @@ export default {
       }
     };
 
+    const startTimer = () => {
+      const timerInterval = setInterval(() => {
+        if (timerWidth.value > 0) {
+          timerWidth.value -= 1;
+        } else {
+          clearInterval(timerInterval);
+          goToResultPage();
+        }
+      }, 100);
+    };
+
+    onMounted(() => {
+      startTimer();
+    });
+
     return {
       currentQuestion,
       selectAnswer,
       goToResultPage,
       selectedAnswer,
+      timerWidth,
     };
   },
 };
 </script>
-
 
 <style scoped>
 .quiz-container {

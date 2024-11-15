@@ -1,9 +1,22 @@
 <template>
   <div class="result-container">
+    <div class="overlay"></div>
     <div class="content">
-      <div class="icon">{{ selectedAnswer === 'O' ? '✅' : '❌' }}</div>
+      <div class="icon" :class="{ correct: selectedAnswer === 'O', incorrect: selectedAnswer === 'X' }">
+        {{ selectedAnswer === 'O' ? '✅' : '❌' }}
+      </div>
       <h1 class="result-text">{{ resultText }}</h1>
-      <button class="next-button" @click="goToFindMistake">틀린 그림 찾기</button>
+      <div class="options">
+        <div class="option" :class="{ correct: selectedAnswer === 'O', incorrect: selectedAnswer === 'X' }">
+          <span class="option-number">1</span>
+          <span class="option-text">O</span>
+        </div>
+        <div class="option" :class="{ correct: selectedAnswer === 'X', incorrect: selectedAnswer === 'O' }">
+          <span class="option-number">2</span>
+          <span class="option-text">X</span>
+        </div>
+      </div>
+      <button class="next-button" @click="goToFindMistake">다음</button>
     </div>
   </div>
 </template>
@@ -30,8 +43,6 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
 .result-container {
   position: relative;
@@ -52,7 +63,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.6); /* 어두운 배경 */
 }
 
 .content {
@@ -61,13 +72,29 @@ export default {
 }
 
 .icon {
-  font-size: 99px;
+  font-size: 107px;
   margin-bottom: 26px;
+  transition: color 0.3s;
+  position: relative;
+  bottom: 20px;
+}
+
+/* 정답과 오답 색상 */
+.correct {
+  color: #007BFF; /* 파란색 */
+}
+
+.incorrect {
+  color: #FF4C4C; /* 빨간색 */
 }
 
 .result-text {
-  font-size: 37px;
-  margin-bottom: 26px;/* 텍스트와 옵션 간격 */
+  font-size: 54px;
+  font-weight: bold;
+  position: relative;
+  right: -14px;
+  position: relative;
+  bottom: 15px;
 }
 
 .options {
@@ -82,40 +109,40 @@ export default {
   align-items: center;
   justify-content: flex-start;
   margin: 10px 0;
-  padding: 20px;
-  width: 1016px;
-  border-radius: 78px;
-  font-size: 24px;
+  padding: 13px;
+  width: 931px;
+  border-radius: 98px;
+  font-size: 48px;
   transition: background-color 0.3s;
   position: relative;
+  color: white;
 }
 
 .option-number {
   background-color: white;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
-  margin-right: 16px;
+  font-size: 41px;
+  margin-right: 45px;
   color: black;
   font-weight: bold;
+  position: relative;
+  right: -22px;
+}
+.correct.option {
+  background-color: #007BFF; /* 파란색 배경 */
 }
 
-.correct {
-  background-color: #007BFF;
-  color: white;
-}
-
-.incorrect {
-  background-color: #FF4C4C;
-  color: white;
+.incorrect.option {
+  background-color: #FF4C4C; /* 빨간색 배경 */
 }
 
 .option-text {
-  font-size: 48px;
+  font-size: 64px;
   font-weight: bold;
 }
 
@@ -130,6 +157,6 @@ export default {
   display: flex;
   justify-content: center;
   position: relative;
-  left: 406px;
+  left: 366px;
 }
 </style>

@@ -31,21 +31,25 @@ export default {
   setup() {
     const route = useRoute();
     const router = useRouter();
+
     const questions = [
-      { text: 'Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.', answer: 'O' },
-      { text: 'Q2. 틀린 그림 찾기 게임은 재미있다.', answer: 'X' },
-    ];
+      {
+        text: 'Q3. 금융상품은 위험성이 가장 중요하다.',
+        answer: 'O',
+      },
+    ]; // 문제 하나만 유지
 
     const currentQuestionIndex = ref(0);
     const selectedAnswer = ref(null);
     const timerWidth = ref(100);
 
+    // 질문 인덱스가 변할 때마다 currentQuestionIndex를 업데이트
     watch(
         () => route.query.questionIndex,
         (newIndex) => {
           currentQuestionIndex.value = parseInt(newIndex) || 0;
         },
-        { immediate: true }
+        {immediate: true}
     );
 
     const currentQuestion = computed(() => questions[currentQuestionIndex.value]);
@@ -57,11 +61,11 @@ export default {
     const goToResultPage = () => {
       if (selectedAnswer.value) {
         router.push({
-          name: 'result',
-          query: { answer: selectedAnswer.value, questionIndex: currentQuestionIndex.value },
+          name: 'quizPage3Result', // 결과 페이지로 이동
+          query: {answer: selectedAnswer.value, questionIndex: currentQuestionIndex.value},
         });
       } else {
-        alert("답안을 선택해 주세요!");
+        alert('답안을 선택해 주세요!');
       }
     };
 
@@ -71,13 +75,15 @@ export default {
           timerWidth.value -= 1;
         } else {
           clearInterval(timerInterval);
-          goToResultPage();
+          goToResultPage();  // 타이머가 끝나면 결과 페이지로 이동
         }
-      }, 100);
+      }, 100); // 100ms마다 타이머 진행
     };
 
     onMounted(() => {
-      startTimer();
+      setTimeout(() => {
+        startTimer();  // 10초 후에 타이머 시작
+      }, 1000); // 페이지 로딩 후 1초 후에 타이머 시작
     });
 
     return {

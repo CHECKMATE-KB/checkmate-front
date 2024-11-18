@@ -16,7 +16,7 @@
           <span class="option-text">X</span>
         </div>
       </div>
-      <button class="next-button" @click="goToFindMistake">다음 문제1</button>
+      <button class="next-button" @click="goToQuizPage4">다음 문제3</button>
     </div>
   </div>
 </template>
@@ -33,12 +33,12 @@ export default {
 
     const resultText = computed(() => (selectedAnswer === 'O' ? '정답입니다!' : '다음 기회에..ㅠㅠ'));
 
-    const goToFindMistake = () => {
-      console.log("Going to find mistake page...");
-      router.push({ name: 'findMistake', query: { questionIndex: 0 } });
+    // QuizPage4로만 이동하도록 설정
+    const goToQuizPage4 = () => {
+      router.push({ name: 'quizPage4', query: { questionIndex: 0 } }); // QuizPage4로 이동
     };
 
-    return { selectedAnswer, resultText, goToFindMistake };
+    return { selectedAnswer, resultText, goToQuizPage4 };
   },
 };
 </script>
@@ -91,10 +91,6 @@ export default {
 .result-text {
   font-size: 54px;
   font-weight: bold;
-  position: relative;
-  right: -14px;
-  position: relative;
-  bottom: 15px;
 }
 
 .options {
@@ -110,11 +106,10 @@ export default {
   justify-content: flex-start;
   margin: 10px 0;
   padding: 13px;
-  width: 931px;
+  width: 931px; /* 옵션 박스 크기 */
   border-radius: 98px;
   font-size: 48px;
   transition: background-color 0.3s;
-  position: relative;
   color: white;
 }
 
@@ -131,8 +126,9 @@ export default {
   color: black;
   font-weight: bold;
   position: relative;
-  right: -22px;
+  right: -22px; /* 번호 위치 */
 }
+
 .correct.option {
   background-color: #007BFF; /* 파란색 배경 */
 }

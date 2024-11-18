@@ -7,71 +7,98 @@
     <h1 class="question-text">{{ currentQuestion.text }}</h1>
     <div class="options">
       <div class="option">
-        <button @click="selectAnswer('O')" :class="{ 'selected': selectedAnswer === 'O' }">
+        <button
+          @click="selectAnswer('O')"
+          :class="{
+            'correct': showResult && isCorrect('O'),
+            'incorrect': showResult && !isCorrect('O'),
+            'selected': !showResult && selectedAnswer === 'O'
+          }"
+          :disabled="showResult"
+        >
           <span class="option-number">1</span>
           <span class="option-text">O</span>
         </button>
       </div>
       <div class="option">
-        <button @click="selectAnswer('X')" :class="{ 'selected': selectedAnswer === 'X' }">
+        <button
+          @click="selectAnswer('X')"
+          :class="{
+            'correct': showResult && isCorrect('X'),
+            'incorrect': showResult && !isCorrect('X'),
+            'selected': !showResult && selectedAnswer === 'X'
+          }"
+          :disabled="showResult"
+        >
           <span class="option-number">2</span>
           <span class="option-text">X</span>
         </button>
       </div>
     </div>
-    <button class="next-button" @click="goToResultPage">다음</button>
+    <button class="next-button" @click="handleNext">{{ buttonText }}</button>
   </div>
 </template>
 
 <script>
-import { ref, computed, watch, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, computed, onMounted } from "vue";
 
 export default {
   setup() {
-    const route = useRoute();
-    const router = useRouter();
     const questions = [
-      { text: 'Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.', answer: 'O' },
-      { text: 'Q2. 틀린 그림 찾기 게임은 재미있다.', answer: 'X' },
+      { text: "Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.", answer: "O" },
+      { text: "Q2. 틀린 그림 찾기 게임은 재미있다.", answer: "X" },
+      { text: "Q3. 금융상품 가입 시 예금자 보호가 가능한 상품은 보통 5천만 원까지 보호된다.", answer: "O" },
+      
     ];
 
     const currentQuestionIndex = ref(0);
     const selectedAnswer = ref(null);
     const timerWidth = ref(100);
+    const showResult = ref(false);
 
-    watch(
-        () => route.query.questionIndex,
-        (newIndex) => {
-          currentQuestionIndex.value = parseInt(newIndex) || 0;
-        },
-        { immediate: true }
-    );
-
+    
     const currentQuestion = computed(() => questions[currentQuestionIndex.value]);
+
+    const buttonText = computed(() => {
+      return showResult.value ? (currentQuestionIndex.value < questions.length - 1 ? "다음 문제" : "결과 보기") : "다음";
+    });
 
     const selectAnswer = (answer) => {
       selectedAnswer.value = answer;
+      showResult.value = true; 
     };
 
-    const goToResultPage = () => {
-      if (selectedAnswer.value) {
-        router.push({
-          name: 'result',
-          query: { answer: selectedAnswer.value, questionIndex: currentQuestionIndex.value },
-        });
+    const isCorrect = (answer) => {
+      return currentQuestion.value.answer === answer;
+    };
+
+    const handleNext = () => {
+      if (showResult.value) {
+        if (currentQuestionIndex.value < questions.length - 1) {
+          currentQuestionIndex.value += 1;
+          resetState();
+        } else {
+          timerWidth.value=0;
+          alert("퀴즈가 종료되었습니다! 결과 페이지로 이동합니다.");
+        }
       } else {
-        alert("답안을 선택해 주세요!");
+        alert("답안을 선택해주세요!");
       }
     };
 
+    const resetState = () => {
+      selectedAnswer.value = null;
+      showResult.value = false;
+      timerWidth.value = 100;
+    };
+
     const startTimer = () => {
-      const timerInterval = setInterval(() => {
+      let timerInterval = setInterval(() => {
         if (timerWidth.value > 0) {
           timerWidth.value -= 1;
         } else {
           clearInterval(timerInterval);
-          goToResultPage();
+          showResult.value = true;
         }
       }, 100);
     };
@@ -82,10 +109,13 @@ export default {
 
     return {
       currentQuestion,
-      selectAnswer,
-      goToResultPage,
+      buttonText,
       selectedAnswer,
+      selectAnswer,
+      handleNext,
       timerWidth,
+      showResult,
+      isCorrect,
     };
   },
 };
@@ -167,24 +197,15 @@ button {
   color: black;
   position: relative;
   width: 100%;
+  transition: background-color 0.3s;
 }
 
-.option-number {
-  background-color: white;
-  border-radius: 50%;
-  width: 62px;
-  height: 62px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  margin-right: 39px;
-  color: black;
+button.correct {
+  background-color: #4CAF50; /* 파란색 */
 }
 
-.option-text {
-  font-size: 65px;
-  font-weight: bold;
+button.incorrect {
+  background-color: #F44336; /* 빨간색 */
 }
 
 button.selected {

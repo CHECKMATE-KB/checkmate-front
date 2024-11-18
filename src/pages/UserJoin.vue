@@ -2,7 +2,7 @@
     <!--  html 전체 영역 container -->
     <div id="page-container">
         <div class="left-container"> <!-- 좌측 이미지 영역 -->
-            <!-- <img src="C:\dev\checkmate_kb\checkmate-front\src\assets\images\logo.png" width="650px" height="750px"> -->
+            <img src="../assets/images/logo.png" width="650px" height="450px">
         </div>
 
         <!-- 우측 회원가입 폼 영역 -->
@@ -11,21 +11,31 @@
             <div id="loginBoxTitle">계정을 만드세요</div>
             <p style="color:#B1B3B9; padding-bottom:16px;">디지털 자산 거래를 시작합니다.</p>
             <!-- 아이디, 비번, 버튼 박스 -->
-            <form>
-                <label for="id" style="font-weight : bold;">아이디</label>
-                <input id="id" type="text" placeholder="아이디를 입력하세요." />
+            <form @submit.prevent="handleJoin">
+                <label for="userId" style="font-weight: bold;">아이디</label>
+                <input id="userId" v-model="user.userId" type="text" placeholder="아이디를 입력하세요." required />
+        
+                <label for="userPw" style="font-weight: bold;">비밀번호</label>
+                <input id="userPw" v-model="user.userPw" type="password" placeholder="비밀번호를 입력하세요." required />
+        
+                <label for="confirmPw" style="font-weight: bold;">비밀번호 확인</label>
+                <input id="confirmPw" v-model="confirmPw" type="password" placeholder="비밀번호를 다시 입력하세요." required />
+        
+                <label for="email" style="font-weight: bold;">이메일</label>
+                <input id="email" v-model="user.email" type="email" placeholder="이메일 주소를 입력하세요." required />
+        
+                <label for="birth" style="font-weight: bold;">생년월일</label>
+                <input id="birth" v-model="user.birth" @input="formatBirth" maxlength="10" placeholder="생년월일을 - 없이 입력해주세요." required />
+        
+                <label for="userName" style="font-weight: bold;">사용자 이름</label>
+                <input id="userName" v-model="user.userName" type="text" placeholder="본인의 이름을 입력해주세요." required />
+        
+                <label for="nickname" style="font-weight: bold;">닉네임</label>
+                <input id="nickname" v-model="user.nickname" type="text" placeholder="닉네임을 입력해주세요." />
+        
+                <label for="userImg" style="font-weight: bold;">프로필 이미지 URL</label>
+                <input id="userImg" v-model="user.userImg" type="text" placeholder="프로필 이미지 URL을 입력해주세요." />
 
-                <label for="password" style="font-weight : bold;">비밀번호</label>
-                <input id="password" type="password" placeholder="비밀번호를 입력하세요." />
-
-                <label for="password" style="font-weight : bold;">비밀번호 확인</label>
-                <input id="password" type="password" placeholder="비밀번호를 다시 입력하세요." />
-                
-                <label for="email" style="font-weight : bold;">이메일</label>
-                <input id="email" type="email" placeholder="이메일 주소를 입력하세요." />
-                
-                <label for="birth" style="font-weight : bold;">생년월일</label>
-                <input id="birth" type="text" v-model="birth" @keyup="formatBirth" maxlength="10" placeholder="생년월일을 - 없이 입력해주세요." />
                 <button type="submit" class="signup-button">가입</button>
             </form>
 
@@ -128,7 +138,10 @@ input {
 </style>
 
 <script setup>
-import { ref } from 'vue';
+import { ref,reactive  } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+////////////////////////////// 생년월일 //////////////////////////////
 // 생년월일 상태 및 에러 메시지 관리
 const birth = ref('');
 
@@ -147,4 +160,34 @@ const formatBirth = () => {
   // 포맷팅된 값으로 업데이트
   birth.value = rawValue;
 };
+
+////////////////////////////// 생년월일 //////////////////////////////
+// 사용자 정보 초기값
+const user = reactive({
+  userId: '',
+  userPw: '',
+  userName: '',
+  email: '',
+  birth: '',
+  userImg: '',
+  nickname: '',
+  accountNo: null,
+});
+
+// 가입 처리 함수
+const handleJoin = async () => {
+    try {
+        const response = await axios.post('api/user/join', user);
+        alert("가입이 완료되었습니다!");
+        console.log("가입 성공 : ", response.data);
+        // 가입 성공 후 로그인 페이지로 이동
+        router.push('/login');
+    } catch (error) {
+        console.error('가입 실패:', error.response?.data || error.message);
+        alert('가입에 실패했습니다. 다시 시도해주세요.');
+    }
+}
+
+// Todo : 로그인 중복 체크 추가 예정
+
 </script>

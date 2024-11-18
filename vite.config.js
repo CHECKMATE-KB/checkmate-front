@@ -22,4 +22,7 @@ export default defineConfig({
   build: {
     outDir: '../Board_Backend/src/main/webapp/resources',
   },
+  optimizeDeps: {
+    include: ['@fullcalendar/vue3', '@fullcalendar/core', '@fullcalendar/daygrid'],
+  },
 });

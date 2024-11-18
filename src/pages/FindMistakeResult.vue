@@ -32,8 +32,8 @@
       <h1 class="result-text">다음 기회에..ㅠㅠ</h1>
     </div>
 
-
-    <button class="next-button" @click="goToQuizPage3">다음 문제2</button>
+    <!-- 다음 문제로 가기 버튼 -->
+    <button class="next-button" @click="goToQuizPage3">다음 문제</button>
   </div>
 </template>
 
@@ -51,14 +51,14 @@ export default {
     // 현재 퀴즈와 틀린 부분 데이터
     const mistakes = ref([]);
     const correctMistakes = [
-      { x: 775, y: 300 },  // 사람 얼굴 부분
-      { x: 715, y: 380 },  // "부자 되기 쿠폰" 텍스트
-      { x: 870, y: 530 }   // "모두 부" 텍스트
+      {x: 775, y: 300},  // 사람 얼굴 부분
+      {x: 715, y: 380},  // "부자 되기 쿠폰" 텍스트
+      {x: 870, y: 530}   // "모두 부" 텍스트
     ];
 
     const questionIndex = parseInt(route.query.questionIndex) || 0;
     const images = [
-      { image1: image1, image2: image2 },
+      {image1: image1, image2: image2},
     ];
     const currentImage1 = ref(images[questionIndex].image1);
     const currentImage2 = ref(images[questionIndex].image2);
@@ -85,13 +85,12 @@ export default {
       const rect = event.target.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
-      mistakes.value.push({ x, y });
-      console.log('Clicked coordinates:', { x, y }); // 추가된 로그
+      mistakes.value.push({x, y});
     };
 
     // 다음 문제로 가기 버튼 클릭 시 QuizPage3로 이동
     const goToQuizPage3 = () => {
-      router.push({ name: 'quizPage3' }); // QuizPage3로 이동
+      router.push({name: 'quizPage3'}); // QuizPage3로 이동
     };
 
     // 페이지 로딩 시 이미지 설정 및 틀린 부분 데이터 가져오기
@@ -131,13 +130,6 @@ export default {
 .find-mistake-container::before {
   content: '';
   position: absolute;
-
-  width: 30px;
-  height: 30px; 
-  border: 2px solid black;
-  border-radius: 50%;
-  background-color: transparent;
-
   top: 0;
   left: 0;
   right: 0;
@@ -209,6 +201,5 @@ export default {
   border-radius: 78px;
   margin-bottom: 30px; /* 버튼 아래 여백 추가 */
   z-index: 4; /* 버튼이 다른 요소 위로 오도록 설정 */
-
 }
 </style>

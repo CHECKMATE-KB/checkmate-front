@@ -113,7 +113,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 0;
+  z-index: 0;  /* 배경 위 */
 }
 
 .timer-bar {
@@ -161,7 +161,8 @@ export default {
   width: 100%;
   height: 100%;
   cursor: pointer;
-  z-index: 2;
+  z-index: 2;  /* 이미지 위로 설정 */
+  background-color: transparent; /* 배경이 투명하도록 설정 */
 }
 
 .mistakes {
@@ -170,7 +171,7 @@ export default {
   left: 0;
   width: 800px;
   height: 400px;
-  pointer-events: none;
+  pointer-events: none; /* 클릭 방지 */
   z-index: 1;
 }
 
@@ -180,7 +181,7 @@ export default {
   height: 80px;
   border: 8px solid black;
   border-radius: 50%;
-  pointer-events: none;
+  pointer-events: none; /* 클릭 방지 */
 }
 
 .next-button {
@@ -193,6 +194,6 @@ export default {
   border-radius: 78px;
   width: 218px;
   cursor: pointer;
-  z-index: 2;
+  z-index: 2; /* 버튼이 가장 위로 */
 }
 </style>

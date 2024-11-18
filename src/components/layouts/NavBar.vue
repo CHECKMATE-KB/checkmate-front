@@ -1,4 +1,6 @@
 <script setup>
+// 로컬스토리지에 로그인 정보가 있으면 로그인 버튼 자리에 로그아웃 + 계정 정보(userNo+님 환영합니다 뜨도록)
+// 로컬스토리지에 로그인 정보가 저장되어 있지 않으면 그냥 그대로
 import { reactive, computed } from 'vue';
 import MenuGroup from './menu/MenuGroup.vue';
 import AccountMenuGroup from './menu/AccountMenuGroup.vue';
@@ -36,7 +38,7 @@ const goToUserJoin = () => {
         <router-link to="/quiz" class="nav-item">퀴즈</router-link>
         <router-link to="/assets" class="nav-item">나의자산</router-link>
         <router-link to="/spending" class="nav-item">소비내역</router-link>
-        <router-link to="/spending" class="nav-item">마이페이지</router-link>
+        <router-link to="/mypage" class="nav-item">마이페이지</router-link>
       </nav>
       <div class="auth-buttons">
         <!-- 로그인 및 등록 버튼 -->

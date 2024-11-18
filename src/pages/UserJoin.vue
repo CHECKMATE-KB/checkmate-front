@@ -2,7 +2,7 @@
     <!--  html 전체 영역 container -->
     <div id="page-container">
         <div class="left-container"> <!-- 좌측 이미지 영역 -->
-            <!-- <img src="C:\dev\checkmate_kb\checkmate-front\src\assets\images\logo.png" width="650px" height="750px"> -->
+            <img src="../assets/images/logo.png" width="650px" height="450px">
         </div>
 
         <!-- 우측 회원가입 폼 영역 -->
@@ -147,4 +147,6 @@ const formatBirth = () => {
   // 포맷팅된 값으로 업데이트
   birth.value = rawValue;
 };
+//
+
 </script>

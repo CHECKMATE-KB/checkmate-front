@@ -39,6 +39,8 @@ const routes = [
   { path: '/challenge/info', name: 'challengeInfo', component: ChallengeInfo },
   { path: '/challenge/detail', name: 'challengeDetail', component: ChallengeDetail },
   { path: '/challenge/start', name: 'challengeStart', component: ChallengeStart },
+  { path: '/userjoin', name: 'UserJoin', component: UserJoin },
+  { path: '/login', name: 'Login', component: Login },
   
 
 

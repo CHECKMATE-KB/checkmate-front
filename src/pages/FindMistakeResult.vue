@@ -32,8 +32,8 @@
       <h1 class="result-text">다음 기회에..ㅠㅠ</h1>
     </div>
 
-    <!-- 다음 문제로 가기 버튼 -->
-    <button class="next-button" @click="goToNextQuiz">다음 문제</button>
+
+    <button class="next-button" @click="goToQuizPage3">다음 문제2</button>
   </div>
 </template>
 
@@ -86,18 +86,17 @@ export default {
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
       mistakes.value.push({ x, y });
+      console.log('Clicked coordinates:', { x, y }); // 추가된 로그
     };
 
-    const goToNextQuiz = () => {
-      router.push({
-        name: 'findMistake',
-        query: { questionIndex: questionIndex + 1 },
-      });
+    // 다음 문제로 가기 버튼 클릭 시 QuizPage3로 이동
+    const goToQuizPage3 = () => {
+      router.push({ name: 'quizPage3' }); // QuizPage3로 이동
     };
 
     // 페이지 로딩 시 이미지 설정 및 틀린 부분 데이터 가져오기
     onMounted(() => {
-      mistakes.value = JSON.parse(route.query.mistakes) || [];
+      mistakes.value = JSON.parse(route.query.mistakes || '[]');
       currentImage1.value = images[questionIndex].image1;
       currentImage2.value = images[questionIndex].image2;
     });
@@ -108,7 +107,7 @@ export default {
       mistakes,
       correctMistakes,
       isCorrect,
-      goToNextQuiz,
+      goToQuizPage3, // QuizPage3로 가는 메서드 반환
       handleImageClick,
     };
   },
@@ -199,7 +198,7 @@ export default {
   padding: 10px 20px;
   font-size: 18px;
   border: none;
-  width:218px;
+  width: 218px;
   border-radius: 78px;
   margin-bottom: 30px; /* 버튼 아래 여백 추가 */
   z-index: 4; /* 버튼이 다른 요소 위로 오도록 설정 */

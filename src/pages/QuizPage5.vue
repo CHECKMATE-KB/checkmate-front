@@ -31,9 +31,13 @@ export default {
   setup() {
     const route = useRoute();
     const router = useRouter();
+
+    // 문제 1개로 수정
     const questions = [
-      { text: 'Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.', answer: 'O' },
-      { text: 'Q2. 틀린 그림 찾기 게임은 재미있다.', answer: 'X' },
+      {
+        text: 'Q5. 주식은 단기적으로 안정적인 수익을 제공한다.',
+        answer: 'X',
+      },
     ];
 
     const currentQuestionIndex = ref(0);
@@ -45,7 +49,7 @@ export default {
         (newIndex) => {
           currentQuestionIndex.value = parseInt(newIndex) || 0;
         },
-        { immediate: true }
+        {immediate: true}
     );
 
     const currentQuestion = computed(() => questions[currentQuestionIndex.value]);
@@ -57,11 +61,11 @@ export default {
     const goToResultPage = () => {
       if (selectedAnswer.value) {
         router.push({
-          name: 'result',
-          query: { answer: selectedAnswer.value, questionIndex: currentQuestionIndex.value },
+          name: 'quizPage5Result', // 결과 페이지로 이동
+          query: {answer: selectedAnswer.value, questionIndex: currentQuestionIndex.value},
         });
       } else {
-        alert("답안을 선택해 주세요!");
+        alert('답안을 선택해 주세요!');
       }
     };
 

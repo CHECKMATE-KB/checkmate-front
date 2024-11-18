@@ -40,7 +40,7 @@ export default {
 .mistake {
   position: absolute;
   width: 30px;
-  height: 30px; //원 크기
+  height: 30px; 
   border: 2px solid black;
   border-radius: 50%;
   background-color: transparent;

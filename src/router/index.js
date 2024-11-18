@@ -15,6 +15,11 @@ import QuizPage5 from '../pages/QuizPage5.vue'; // QuizPage5 추가
 import QuizPage5Result from '../pages/QuizPage5Result.vue'; // QuizPage5Result 추가
 import FinalResult from '../pages/FinalResult.vue'; // FinalResult 추가
 import Mypage from '../pages/Mypage.vue';
+import Challenge from '../pages/challenge/Challenge.vue'
+import ChallengeInfo from '../pages/challenge/ChallengeInfo.vue'
+import ChallengeDetail from '../pages/challenge/ChallengeDetail.vue'
+import ChallengeStart from '../pages/challenge/ChallengeStart.vue'
+
 
 const routes = [
 
@@ -31,7 +36,13 @@ const routes = [
   { path: '/quizPage5Result', name: 'quizPage5Result', component: QuizPage5Result }, // QuizPage4Result 추가
   { path: '/finalResult', name: 'finalResult', component: FinalResult }, // FinalResult 추가
   { path: '/mypage', name: 'Mypage', component: Mypage },
- 
+  { path: '/challenge', name: 'challenge', component: Challenge },
+  { path: '/challenge/info', name: 'challengeInfo', component: ChallengeInfo },
+  { path: '/challenge/detail', name: 'challengeDetail', component: ChallengeDetail },
+  { path: '/challenge/start', name: 'challengeStart', component: ChallengeStart },
+  
+
+
 
 ];
 

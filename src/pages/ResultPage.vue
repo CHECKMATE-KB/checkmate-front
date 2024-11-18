@@ -1,46 +1,36 @@
 <template>
   <div class="result-container">
-    <div class="overlay"></div>
     <div class="content">
       <div class="icon">{{ selectedAnswer === 'O' ? '✅' : '❌' }}</div>
       <h1 class="result-text">{{ resultText }}</h1>
-      <div class="options">
-        <div class="option" :class="{'correct': selectedAnswer === 'O', 'incorrect': selectedAnswer === 'X'}">
-          <span class="option-number">1</span>
-          <span class="option-text">O</span>
-        </div>
-        <div class="option" :class="{'correct': selectedAnswer === 'X', 'incorrect': selectedAnswer === 'O'}">
-          <span class="option-number">2</span>
-          <span class="option-text">X</span>
-        </div>
-      </div>
-      <button class="next-button" @click="goBack">다음</button>
+      <button class="next-button" @click="goToFindMistake">틀린 그림 찾기</button>
     </div>
   </div>
 </template>
 
 <script>
 import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
   setup() {
     const route = useRoute();
-    const selectedAnswer = route.query.answer; // 쿼리 파라미터로 선택된 답안 가져오기
+    const router = useRouter();
+    const selectedAnswer = route.query.answer;
 
-    const resultText = computed(() => {
-      return selectedAnswer === 'O' ? '정답입니다!' : '다음 기회에..ㅠㅠ';
-    });
+    const resultText = computed(() => (selectedAnswer === 'O' ? '정답입니다!' : '다음 기회에..ㅠㅠ'));
 
-    const goBack = () => {
-      // 이전 페이지로 이동
-      window.history.back();
+    const goToFindMistake = () => {
+      console.log("Going to find mistake page...");
+      router.push({ name: 'findMistake', query: { questionIndex: 0 } });
     };
 
-    return { selectedAnswer, resultText, goBack };
+    return { selectedAnswer, resultText, goToFindMistake };
   },
 };
 </script>
+
+
 
 <style scoped>
 .result-container {

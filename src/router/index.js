@@ -8,6 +8,8 @@ import authRotes from './auth';
 import boardRotes from './board';
 import travelRoutes from './travel';
 import galleryRoutes from './gallery';
+import FindMistake from '../pages/FindMistake.vue';
+import FindMistakeResult from '../pages/FindMistakeResult.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,11 +39,14 @@ const router = createRouter({
       name: 'UserJoin',    // 결과 페이지의 이름 (name과 component 속성을 일치시켜야 함)
       component: UserJoin, // 결과 페이지 컴포넌트 (name과 component 속성을 일치시켜야 함)
     },
-    ...authRotes,
-    ...boardRotes,
-    ...travelRoutes,
-    ...galleryRoutes,
+    { path: '/findMistake', name: 'findMistake', component: FindMistake },
+  { path: '/findMistakeResult', name: 'findMistakeResult', component: FindMistakeResult },
   ],
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes,
+
 });
 
 export default router;

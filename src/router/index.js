@@ -16,7 +16,7 @@ import ChallengeStart from '../pages/challenge/ChallengeStart.vue'
 
 const routes = [
 
-  { path: '/', name: 'home', component: HomePage },
+  { path: '/', name: 'HomePage', component: HomePage },
   { path: '/quiz', name: 'quiz', component: QuizPage },
   { path: '/findMistake', name: 'findMistake', component: FindMistake },
   { path: '/findMistakeResult', name: 'findMistakeResult', component: FindMistakeResult },

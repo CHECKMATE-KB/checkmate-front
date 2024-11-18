@@ -4,7 +4,7 @@ import HomePage from '../pages/HomePage.vue';
 import QuizPage from '../pages/QuizPage.vue'; // 퀴즈 페이지 컴포넌트 임포트
 import ResultPage from '../pages/ResultPage.vue'; // 결과 페이지 컴포넌트 임포트
 import UserJoin from '../pages/UserJoin.vue'; // 회원가입 페이지 컴포넌트 임포트
-import Login from '../pages/Login.vue'; // 로그인 페이지 컴포넌트 임포트
+import Login from '../pages/Login.vue'; 
 import FindMistake from '../pages/FindMistake.vue';
 import FindMistakeResult from '../pages/FindMistakeResult.vue';
 import QuizPage3 from '../pages/QuizPage3.vue'; // QuizPage3 추가
@@ -19,7 +19,6 @@ import Challenge from '../pages/challenge/Challenge.vue'
 import ChallengeInfo from '../pages/challenge/ChallengeInfo.vue'
 import ChallengeDetail from '../pages/challenge/ChallengeDetail.vue'
 import ChallengeStart from '../pages/challenge/ChallengeStart.vue'
-
 
 const routes = [
 

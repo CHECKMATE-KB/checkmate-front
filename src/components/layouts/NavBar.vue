@@ -36,7 +36,7 @@ const goToUserJoin = () => {
         <router-link to="/quiz" class="nav-item">퀴즈</router-link>
         <router-link to="/assets" class="nav-item">나의자산</router-link>
         <router-link to="/spending" class="nav-item">소비내역</router-link>
-        <router-link to="/spending" class="nav-item">마이페이지</router-link>
+        <router-link to="/mypage" class="nav-item">마이페이지</router-link>
       </nav>
       <div class="auth-buttons">
         <!-- 로그인 및 등록 버튼 -->

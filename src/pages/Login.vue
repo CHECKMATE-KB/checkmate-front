@@ -12,12 +12,12 @@
             <div id="loginBoxTitle">계정을 만드세요</div>
             <p style="color:#B1B3B9; padding-bottom:16px;">디지털 자산 거래를 시작합니다.</p>
             <!-- 아이디, 비번, 버튼 박스 -->
-            <form>
+            <form @submit.prevent="handleLogin">
                 <label for="id" style="font-weight : bold;">아이디</label>
-                <input id="id" type="text" placeholder="아이디를 입력하세요." />
+                <input id="id" v-model="user.userId" type="text" placeholder="아이디를 입력하세요." />
 
                 <label for="password" style="font-weight : bold;">비밀번호</label>
-                <input id="password" type="password" placeholder="비밀번호를 입력하세요." />
+                <input id="password" v-model="user.userPw" type="password" placeholder="비밀번호를 입력하세요." />
         
                 <button type="submit" class="signup-button">로그인</button>
             </form>
@@ -121,4 +121,45 @@ input {
 </style>
 
 <script setup>
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+
+// Vue Router 사용
+const router = useRouter();
+
+// 사용자 로그인 데이터
+const user = reactive({
+    userId: '',
+    userPw: '',
+});
+
+// 로그인 처리 함수
+const handleLogin = async () => {
+    // 사용자 입력값 검증
+    if (!user.userId.trim()) {
+        alert('아이디를 입력해주세요.');
+        return;
+    }
+    if (!user.userPw.trim()) {
+        alert('비밀번호를 입력해주세요.');
+        return;
+    }
+
+    try {
+        const response = await axios.post('api/user/login', user);
+        const { token, userNo } = response.data; // 서버로부터 받은 토큰과 userNo
+        alert('로그인에 성공했습니다!');
+        
+        // 토큰을 로컬 스토리지에 저장
+        localStorage.setItem('token', token);
+        localStorage.setItem('userNo', userNo);
+
+        // 로그인 성공 후 메인 페이지로 이동
+        router.push('/');
+    } catch (error) {
+            console.error('로그인 실패:', error.response?.data || error.message);
+            alert(error.response?.data || '로그인에 실패했습니다. 서버 문제일 수 있습니다. 나중에 다시 시도해주세요.');
+    }
+};
 </script>

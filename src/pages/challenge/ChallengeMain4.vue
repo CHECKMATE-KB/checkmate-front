@@ -1,0 +1,223 @@
+<template>
+  <div class="consumption-container">
+    <h2 class="title">이번주 소비내역을 확인해보세요!</h2>
+
+    <!-- 상단 카테고리 아이콘 -->
+    <div class="category-container">
+      <div
+        v-for="category in categories"
+        :key="category.name"
+        class="category-item"
+        :class="{ active: selectedCategory === category.name }"
+        @click="selectCategory(category.name)"
+      >
+        <img :src="category.icon" :alt="category.name" />
+        <p>{{ category.name }}</p>
+      </div>
+    </div>
+
+    <!-- 차트 영역 -->
+    <div class="chart-container">
+      <Bar v-if="chartData" :data="chartData" :options="chartOptions" />
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from "vue";
+import { Bar } from "vue-chartjs";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+
+const categories = [
+  { name: "전체", icon: "/images/savico.gif" },
+  { name: "음료", icon: "/images/cafeico2.gif" },
+  { name: "교통", icon: "/images/bus.gif" },
+  { name: "식비", icon: "/images/food.gif" },
+  { name: "유흥", icon: "/images/party.gif" },
+];
+
+const userData = {
+  전체: [
+    { name: "정단호", total: 5000 },
+    { name: "홍세영", total: 6500 },
+    { name: "황현석", total: 4700 },
+    { name: "정예슬", total: 7000 },
+    { name: "이조은", total: 4800 },
+  ],
+  음료: [
+    { name: "정단호", amount: 1000 },
+    { name: "홍세영", amount: 2000 },
+    { name: "황현석", amount: 1500 },
+    { name: "정예슬", amount: 800 },
+    { name: "이조은", amount: 600 },
+  ],
+  교통: [
+    { name: "정단호", amount: 2000 },
+    { name: "홍세영", amount: 1000 },
+    { name: "황현석", amount: 1200 },
+    { name: "정예슬", amount: 1800 },
+    { name: "이조은", amount: 1400 },
+  ],
+  식비: [
+    { name: "정단호", amount: 1500 },
+    { name: "홍세영", amount: 2500 },
+    { name: "황현석", amount: 1300 },
+    { name: "정예슬", amount: 2000 },
+    { name: "이조은", amount: 1800 },
+  ],
+  유흥: [
+    { name: "정단호", amount: 500 },
+    { name: "홍세영", amount: 1000 },
+    { name: "황현석", amount: 700 },
+    { name: "정예슬", amount: 1400 },
+    { name: "이조은", amount: 1000 },
+  ],
+};
+
+const selectedCategory = ref("전체");
+const chartData = ref(null);
+
+const chartOptions = ref({
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+    },
+    tooltip: {
+      enabled: true,
+    },
+  },
+  scales: {
+    x: {
+      grid: { display: false },
+      ticks: { font: { size: 14 } },
+    },
+    y: {
+      beginAtZero: true,
+      grid: { display: true },
+    },
+  },
+  elements: {
+    bar: {
+      borderRadius: 15,
+      borderSkipped: false,
+      barThickness: 20,
+    },
+  },
+});
+
+const createGradient = (ctx, index) => {
+  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+  const colors = [
+    ["#FF9A9E", "#FAD0C4"],
+    ["#A18CD1", "#FBC2EB"],
+    ["#84FAB0", "#8FD3F4"],
+    ["#FCCB90", "#D57EEB"],
+    ["#FFDEE9", "#B5FFFC"],
+  ];
+  gradient.addColorStop(0, colors[index][0]);
+  gradient.addColorStop(1, colors[index][1]);
+  return gradient;
+};
+
+const selectCategory = (category) => {
+  selectedCategory.value = category;
+  updateChartData(category);
+};
+
+const updateChartData = (category) => {
+  const categoryData = userData[category];
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  chartData.value = {
+    labels: categoryData.map((user) => user.name),
+    datasets: [
+      {
+        label: "소비 금액",
+        data: category === "전체" ? categoryData.map((user) => user.total) : categoryData.map((user) => user.amount),
+        backgroundColor: categoryData.map((_, index) => createGradient(ctx, index)),
+        borderColor: "rgba(0, 0, 0, 0.1)",
+        borderWidth: 1,
+        hoverBorderWidth: 2,
+      },
+    ],
+  };
+};
+
+updateChartData(selectedCategory.value);
+</script>
+
+<style>
+.consumption-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-align: center;
+  color:#2a8ee4;
+}
+
+.category-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+.category-item {
+  width: 100px;
+  cursor: pointer;
+  text-align: center;
+  padding: 10px;
+}
+
+.category-item img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+}
+
+.category-item p {
+  font-size: 1em;
+}
+
+.category-item.active {
+  border-radius: 10px;
+}
+
+.chart-container {
+  width: 100%;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: none !important; /* 배경 이미지 제거 */
+}
+</style>

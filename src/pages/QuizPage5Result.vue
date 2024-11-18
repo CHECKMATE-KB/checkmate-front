@@ -16,7 +16,7 @@
           <span class="option-text">X</span>
         </div>
       </div>
-      <button class="next-button" @click="goToFindMistake">다음 문제1</button>
+      <button class="next-button" @click="goToFinalResult">다음 문제5</button>
     </div>
   </div>
 </template>
@@ -30,15 +30,23 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const selectedAnswer = route.query.answer;
+    const correctAnswer = 'X'; // 정답 설정
 
     const resultText = computed(() => (selectedAnswer === 'O' ? '정답입니다!' : '다음 기회에..ㅠㅠ'));
 
-    const goToFindMistake = () => {
-      console.log("Going to find mistake page...");
-      router.push({ name: 'findMistake', query: { questionIndex: 0 } });
+    const goToFinalResult = () => {
+      // 정답 수를 로컬 스토리지에 저장
+      let correctAnswers = parseInt(localStorage.getItem('correctAnswers')) || 0;
+      if (selectedAnswer === correctAnswer) {
+        correctAnswers += 1;
+      }
+      localStorage.setItem('correctAnswers', correctAnswers);
+
+      // 최종 결과 페이지로 이동
+      router.push({ name: 'finalResult' }); // FinalResult로 이동
     };
 
-    return { selectedAnswer, resultText, goToFindMistake };
+    return { selectedAnswer, resultText, goToFinalResult };
   },
 };
 </script>
@@ -92,8 +100,6 @@ export default {
   font-size: 54px;
   font-weight: bold;
   position: relative;
-  right: -14px;
-  position: relative;
   bottom: 15px;
 }
 
@@ -110,11 +116,10 @@ export default {
   justify-content: flex-start;
   margin: 10px 0;
   padding: 13px;
-  width: 931px;
+  width: 931px; /* 옵션 박스 크기 */
   border-radius: 98px;
   font-size: 48px;
   transition: background-color 0.3s;
-  position: relative;
   color: white;
 }
 
@@ -131,8 +136,9 @@ export default {
   color: black;
   font-weight: bold;
   position: relative;
-  right: -22px;
+  right: -22px; /* 번호 위치 */
 }
+
 .correct.option {
   background-color: #007BFF; /* 파란색 배경 */
 }

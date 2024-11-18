@@ -2,7 +2,7 @@
     <!--  html 전체 영역 container -->
     <div id="page-container">
         <div class="left-container"> <!-- 좌측 이미지 영역 -->
-            <img src="C:\dev\checkmate_kb\checkmate-front\src\assets\images\logo.png" width="650px" height="750px">
+            <!-- <img src="C:\dev\checkmate_kb\checkmate-front\src\assets\images\logo.png" width="650px" height="450px"> -->
         </div>
 
         <!-- 우측 회원가입 폼 영역 -->
@@ -17,20 +17,12 @@
 
                 <label for="password" style="font-weight : bold;">비밀번호</label>
                 <input id="password" type="password" placeholder="비밀번호를 입력하세요." />
-
-                <label for="password" style="font-weight : bold;">비밀번호 확인</label>
-                <input id="password" type="password" placeholder="비밀번호를 다시 입력하세요." />
-                
-                <label for="email" style="font-weight : bold;">이메일</label>
-                <input id="email" type="email" placeholder="이메일 주소를 입력하세요." />
-                
-                <label for="birth" style="font-weight : bold;">생년월일</label>
-                <input id="birth" type="text" v-model="birth" @keyup="formatBirth" maxlength="10" placeholder="생년월일을 - 없이 입력해주세요." />
-                <button type="submit" class="signup-button">가입</button>
+        
+                <button type="submit" class="signup-button">로그인</button>
             </form>
 
             <p class="login-link">
-                이미 계정이 있으신가요? <a href="/login" style="color:#FFB229;">로그인하기</a>
+                계정이 없나요? <a href="/userjoin" style="color:#FFB229;">회원가입하기</a>
               </p>
         </div>
     </div>
@@ -128,25 +120,4 @@ input {
 </style>
 
 <script setup>
-import { ref } from 'vue';
-// 생년월일 상태 및 에러 메시지 관리
-const birth = ref('');
-
-// 생년월일 포맷팅 함수
-const formatBirth = () => {
-  // 숫자만 남기기
-  let rawValue = birth.value.replace(/[^0-9]/g, '');
-  
-  // 하이픈 추가
-  if (rawValue.length >= 4 && rawValue.length <= 6) {
-    rawValue = rawValue.slice(0, 4) + '-' + rawValue.slice(4);
-  } else if (rawValue.length > 6) {
-    rawValue = rawValue.slice(0, 4) + '-' + rawValue.slice(4, 6) + '-' + rawValue.slice(6);
-  }
-
-  // 포맷팅된 값으로 업데이트
-  birth.value = rawValue;
-};
-//
-
 </script>

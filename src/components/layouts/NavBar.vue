@@ -3,12 +3,23 @@ import { reactive, computed } from 'vue';
 import MenuGroup from './menu/MenuGroup.vue';
 import AccountMenuGroup from './menu/AccountMenuGroup.vue';
 import config from '@/config';
+import { useRouter } from 'vue-router'; // useRouter 훅 추가
 
 let state = reactive({ isNavShow: false });
 
 let navClass = computed(() => (state.isNavShow ? 'collapse navbar-collapse show' : 'collapse navbar-collapse'));
 
 const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
+
+// Vue Router 사용 설정
+const router = useRouter();
+const goToLogin = () => {
+  router.push('/login'); // 로그인 페이지로 이동
+}
+const goToUserJoin = () => {
+  router.push('./userjoin'); // 회원가입 페이지로 이동
+}
+
 </script>
 
 <template>
@@ -29,8 +40,8 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
       </nav>
       <div class="auth-buttons">
         <!-- 로그인 및 등록 버튼 -->
-        <button class="sign-in">로그인</button>
-        <button class="register">회원가입</button>
+        <button class="sign-in" @click="goToLogin">로그인</button>
+        <button class="register" @click="goToUserJoin">회원가입</button>
       </div>
     </div>
   </header>

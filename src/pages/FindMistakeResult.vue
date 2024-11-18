@@ -131,13 +131,13 @@ export default {
 .find-mistake-container::before {
   content: '';
   position: absolute;
-<<<<<<< HEAD
+
   width: 30px;
   height: 30px; 
   border: 2px solid black;
   border-radius: 50%;
   background-color: transparent;
-=======
+
   top: 0;
   left: 0;
   right: 0;
@@ -209,6 +209,6 @@ export default {
   border-radius: 78px;
   margin-bottom: 30px; /* 버튼 아래 여백 추가 */
   z-index: 4; /* 버튼이 다른 요소 위로 오도록 설정 */
->>>>>>> 638abdf898abf29b0cd9f38cb5c9e9e220c59d68
+
 }
 </style>

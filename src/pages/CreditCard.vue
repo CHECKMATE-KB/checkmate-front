@@ -66,71 +66,96 @@
   </template>
   
   <script setup>
-  import { ref, computed } from "vue";
-  import { defineEmits } from "vue";
-  
-  // 부모 컴포넌트에 데이터 전달
-  const emit = defineEmits(["add-card"]);
-  
-  // 상태 관리
-  const cardNumber = ref(["", "", "", ""]);
-  const cardHolder = ref("");
-  const cardMonth = ref("");
-  const cardYear = ref("");
-  const cardCCV = ref("");
-  
-  // 카드 뒤집기 상태
-  const isFlipped = ref(false);
-  
-  // 포맷된 카드 번호
-  const formattedCardNumber = computed(() =>
-    cardNumber.value.map((num) => num.padEnd(4, "*")).join(" ")
-  );
-  
-  // 만료 날짜
-  const cardExpiration = computed(() =>
-    cardMonth.value && cardYear.value
-      ? `${cardMonth.value < 10 ? "0" + cardMonth.value : cardMonth.value}/${
-          cardYear.value.toString().slice(-2)
-        }`
-      : ""
-  );
-  
-  // 연도 목록
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
-  
-  // 카드 입력 값 검증 함수
-  const validateCardInput = (index) => {
-    cardNumber.value[index] = cardNumber.value[index].replace(/[^0-9]/g, "");
+import { ref, computed } from "vue";
+import axios from "axios";
+
+// 상태 관리
+const cardNumber = ref(["", "", "", ""]);
+const cardHolder = ref("");
+const cardMonth = ref("");
+const cardYear = ref("");
+const cardCCV = ref("");
+
+// 카드 뒤집기 상태
+const isFlipped = ref(false);
+
+// 포맷된 카드 번호
+const formattedCardNumber = computed(() =>
+  cardNumber.value.map((num) => num.padEnd(4, "*")).join("-")
+);
+
+// 만료 날짜
+const cardExpiration = computed(() =>
+  cardMonth.value && cardYear.value
+    ? `${String(cardMonth.value).padStart(2, "0")}/${cardYear.value.slice(-2)}`
+    : ""
+);
+
+// 연도 목록
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
+
+// 카드 입력 값 검증 함수
+const validateCardInput = (index) => {
+  cardNumber.value[index] = cardNumber.value[index].replace(/[^0-9]/g, "");
+};
+
+// 카드 회전 함수
+const flipCard = (flip) => {
+  isFlipped.value = flip;
+};
+
+const submitCard = async () => {
+  // 필수 입력값 확인
+  const isCardNumberComplete = cardNumber.value.every((num) => num.length === 4);
+  const isFormValid =
+    isCardNumberComplete && cardHolder.value && cardMonth.value && cardYear.value;
+
+  if (!isFormValid) {
+    alert("모든 필수 정보를 입력해주세요!");
+    return;
+  }
+
+  // 카드 등록 데이터
+  const cardData = {
+    userNo: 13, // 사용자 번호 (수정 필요)
+    cardName: cardHolder.value,
+    cardNumber: cardNumber.value.join("-"),
+    expiryDate: `${cardYear.value}-${String(cardMonth.value).padStart(2, "0")}-01`,
+    cardType: "1",
+    cardCompany: "VISA",
+    billingDate: "2024-12-07",
+    registerDate: new Date().toISOString(),
   };
-  
-  // 카드 회전 함수
-  const flipCard = (flip) => {
-    isFlipped.value = flip;
-  };
-  
-  // 카드 등록 함수
-  const submitCard = () => {
-    // 필수 입력값 확인
-    const isCardNumberComplete = cardNumber.value.every((num) => num.length === 4);
-    const isFormValid =
-      isCardNumberComplete && cardHolder.value && cardMonth.value && cardYear.value;
-  
-    if (!isFormValid) {
-      alert("모든 필수 정보를 입력해주세요!");
-      return;
-    }
-  
-    const card = {
-      cardNumber: formattedCardNumber.value,
-      cardHolder: cardHolder.value,
-      expiration: cardExpiration.value,
-    };
-    emit("add-card", card);
+
+  console.log("Sending card data:", cardData);
+
+  try {
+    // 서버 요청
+    const response = await axios.post("http://localhost:8080/api/card/register", cardData);
+    console.log("Response:", response.data);
+
     alert("카드가 성공적으로 등록되었습니다!");
-  };
-  </script>
+
+    // 모달 닫기
+    const overlay = document.querySelector(".popup-overlay");
+    if (overlay) overlay.style.display = "none";
+
+    // 입력 필드 초기화
+    cardNumber.value = ["", "", "", ""];
+    cardHolder.value = "";
+    cardMonth.value = "";
+    cardYear.value = "";
+
+    // 페이지 새로고침 (필요 시)
+    location.reload();
+  } catch (error) {
+    console.error("Failed to register card:", error.response?.data || error.message);
+    alert("카드 등록에 실패했습니다. 다시 시도해주세요.");
+  }
+};
+</script>
+
   
   
   <style scoped>

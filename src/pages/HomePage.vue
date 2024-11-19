@@ -149,10 +149,10 @@ const moveRight = () => {
 }
 
 .left-arrow {
-  left: 10px; /* 왼쪽 화살표 위치 조정 */
+  left: 10px;
 }
 
 .right-arrow {
-  right: 10px; /* 오른쪽 화살표 위치 조정 */
+  right: 10px; 
 }
 </style>

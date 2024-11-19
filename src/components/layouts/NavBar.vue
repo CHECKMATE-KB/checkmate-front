@@ -49,7 +49,7 @@ watchEffect(() => {
   <header class="header">
     <div class="logo">
       <!-- 로고 영역 -->
-      <img src="@/assets/images/logo.png" alt="Logo" />
+      <img src="@/assets/images/cmlogo2.png" alt="Logo" />
     </div>
     <div class="menu-auth-container">
       <nav class="nav">
@@ -91,7 +91,7 @@ watchEffect(() => {
 
 /* 로고 스타일 */
 .logo img {
-  height: 50px;
+  height: 80px;
 }
 
 /* 메뉴와 인증 버튼을 하나의 컨테이너로 묶음 */

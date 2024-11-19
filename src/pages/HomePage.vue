@@ -153,6 +153,6 @@ const moveRight = () => {
 }
 
 .right-arrow {
-  right: 10px; /* 오른쪽 화살표 위치 조정 */
+  right: 10px; 
 }
 </style>

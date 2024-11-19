@@ -2,7 +2,7 @@
     <!--  html 전체 영역 container -->
     <div id="page-container">
         <div class="left-container"> <!-- 좌측 이미지 영역 -->
-            <img src="../assets/images/logo.png" width="650px" height="450px">
+            <img src="../assets/images/logo.png" width="650px" height="700px">
         </div>
 
         <!-- 우측 회원가입 폼 영역 -->
@@ -138,9 +138,11 @@ input {
 </style>
 
 <script setup>
-import { ref,reactive  } from 'vue';
+import { ref,reactive } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+
+const router = useRouter();
 ////////////////////////////// 생년월일 //////////////////////////////
 // 생년월일 상태 및 에러 메시지 관리
 const birth = ref('');
@@ -161,7 +163,7 @@ const formatBirth = () => {
   birth.value = rawValue;
 };
 
-////////////////////////////// 생년월일 //////////////////////////////
+////////////////////////////// 회원가입 //////////////////////////////
 // 사용자 정보 초기값
 const user = reactive({
   userId: '',

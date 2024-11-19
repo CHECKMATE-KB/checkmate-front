@@ -164,7 +164,7 @@ const handleLogin = async () => {
 
     } catch (error) {
             console.error('로그인 실패:', error.response?.data || error.message);
-            alert(error.response?.data || '로그인에 실패했습니다. 서버 문제일 수 있습니다. 나중에 다시 시도해주세요.');
+            alert('로그인에 실패했습니다. 아이디나 비밀번호가 다릅니다.');
     }
 };
 </script>

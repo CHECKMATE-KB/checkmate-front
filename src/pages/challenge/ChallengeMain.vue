@@ -7,8 +7,8 @@
         class="card" 
         :style="{ backgroundImage: `url(${backgroundImage})` }">
         <div class="overlay">
-          <img :src="participant.image" alt="Participant" class="participant-image" />
-          <h3 class="participant-name">{{ participant.name }}</h3>
+          <img :src="participant.userImg" alt="Participant" class="participant-image" />
+          <h3 class="participant-name">{{ participant.userName }}</h3>
         </div>
       </div>
     </div>
@@ -19,15 +19,36 @@
 // 로컬 이미지 파일 경로를 import
 import backgroundImage from "@/assets/images/background.png";
 import outerBackground from "@/assets/images/challenge-back5.png";
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
-const participants = [
-  { id: 1, name: "정단호", image: "https://via.placeholder.com/100" },
-  { id: 2, name: "홍세영", image: "https://via.placeholder.com/100" },
-  { id: 3, name: "황현석", image: "https://via.placeholder.com/100" },
-  { id: 4, name: "정예슬", image: "https://via.placeholder.com/100" },
-  { id: 5, name: "이조은", image: "https://via.placeholder.com/100" },
-];
+
+const participants = ref([]);
+const teamNo = ref(3);
+
+// const participants = [
+//   { id: 1, name: "정단호", image: "https://via.placeholder.com/100" },
+//   { id: 2, name: "홍세영", image: "https://via.placeholder.com/100" },
+//   { id: 3, name: "황현석", image: "https://via.placeholder.com/100" },
+//   { id: 4, name: "정예슬", image: "https://via.placeholder.com/100" },
+//   { id: 5, name: "이조은", image: "https://via.placeholder.com/100" },
+// ];
+const fetchTeamMembers = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/team/member/${teamNo.value}`);
+    participants.value = response.data; // API에서 받아온 데이터를 저장
+    console.log("Fetched team members:", participants.value);
+  } catch (error) {
+    console.error("Failed to fetch team members:", error);
+  }
+};
+
+onMounted(() => {
+  fetchTeamMembers();
+});
 </script>
+
+
 
 <style>
 .outer-card {

@@ -1,27 +1,48 @@
 <script setup>
 // 로컬스토리지에 로그인 정보가 있으면 로그인 버튼 자리에 로그아웃 + 계정 정보(userNo+님 환영합니다 뜨도록)
-// 로컬스토리지에 로그인 정보가 저장되어 있지 않으면 그냥 그대로
-import { reactive, computed } from 'vue';
+
+import { ref, watchEffect , onMounted } from 'vue';
 import MenuGroup from './menu/MenuGroup.vue';
 import AccountMenuGroup from './menu/AccountMenuGroup.vue';
 import config from '@/config';
 import { useRouter } from 'vue-router'; // useRouter 훅 추가
-
-let state = reactive({ isNavShow: false });
-
-let navClass = computed(() => (state.isNavShow ? 'collapse navbar-collapse show' : 'collapse navbar-collapse'));
-
-const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
+import { storenickName } from '@/stores/userState'; // 전역 상태 가져오기
 
 // Vue Router 사용 설정
 const router = useRouter();
-const goToLogin = () => {
-  router.push('/login'); // 로그인 페이지로 이동
-}
-const goToUserJoin = () => {
-  router.push('./userjoin'); // 회원가입 페이지로 이동
-}
 
+// 상태 관리
+// const userNo = ref(''); // 로그인한 유저 번호
+
+// 로그인 상태 확인 함수
+const checkLogin = () => {
+  const localStorageGetNickName = localStorage.getItem('nickName');
+  if (localStorageGetNickName) {
+    storenickName.value = localStorageGetNickName; // 상태 업데이트
+  } else {
+    storenickName.value = ''; // 상태 초기화 (비로그인 상태)
+  }
+};
+
+// 로그아웃 함수
+const handleLogout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('userNo');
+  localStorage.removeItem('nickName');
+  storenickName.value = ''; 
+  alert('로그아웃되었습니다.');
+  router.push('/'); // 메인 페이지로 이동
+};
+
+// 컴포넌트가 로드될 때 로그인 상태 확인
+onMounted(() => {
+  checkLogin();
+});
+
+// 상태 변화 감지 및 UI 업데이트
+watchEffect(() => {
+  console.log('userNo 상태 변경:', storenickName.value);
+});
 </script>
 
 <template>
@@ -41,9 +62,15 @@ const goToUserJoin = () => {
         <router-link to="/spending" class="nav-item">마이페이지</router-link>
       </nav>
       <div class="auth-buttons">
-        <!-- 로그인 및 등록 버튼 -->
-        <button class="sign-in" @click="goToLogin">로그인</button>
-        <button class="register" @click="goToUserJoin">회원가입</button>
+        <!-- 로그인 상태에 따른 버튼 표시 -->
+        <template v-if="storenickName">
+          <span class="welcome-message"> {{ storenickName }}님 환영합니다.</span>
+          <button class="logout-button" @click="handleLogout">로그아웃</button>
+        </template>
+        <template v-else>
+          <button class="sign-in" @click="router.push('/login')">로그인</button>
+          <button class="register" @click="router.push('/userjoin')">회원가입</button>
+        </template>
       </div>
     </div>
   </header>
@@ -99,20 +126,24 @@ const goToUserJoin = () => {
 }
 
 .sign-in,
-.register {
+.register,
+.welcome-message,
+.logout-button {
   padding: 8px 15px; /* 버튼 높이를 nav-item과 유사하게 조정 */
   line-height: 16px; /* 텍스트의 중앙 정렬을 위해 조정 */
   font-size: 16px;
   border-radius: 5px;
 }
 
-.sign-in {
+.sign-in,
+.welcome-message {
   background-color: transparent;
   border: 1px solid #333;
   color: #333;
 }
 
-.register {
+.register,
+.logout-button {
   background-color: #333;
   color: white;
   border: none;
@@ -121,5 +152,9 @@ const goToUserJoin = () => {
 .sign-in:hover,
 .register:hover {
   opacity: 0.8;
+}
+
+.logout-button {
+
 }
 </style>

@@ -4,25 +4,25 @@
     <!-- 상위 3등 카드 -->
     <div class="top-three-container">
       <div
-        v-for="(user, index) in topThree"
+        v-for="(user, index) in users"
         :key="index"
         class="profile-card"
-        :style="{ background: user.background }"
+        :style="{ background: getBackgroundStyle(index)}"
       >
         <div class="rank-badge">
-          <span v-if="user.rank === 1" class="medal gold">
+          <span v-if="index === 0" class="medal gold" >
             🥇 <!-- 금메달 -->
           </span>
-          <span v-else-if="user.rank === 2" class="medal silver">
+          <span v-else-if="index === 1" class="medal silver">
             🥈 <!-- 은메달 -->
           </span>
-          <span v-else-if="user.rank === 3" class="medal bronze">
+          <span v-else-if="index === 2" class="medal bronze">
             🥉 <!-- 동메달 -->
           </span>
         </div>
-        <img :src="user.profile" alt="Profile" class="profile-image" />
-        <div class="user-name">{{ user.name }}</div>
-        <div class="user-points">포인트: {{ user.points }}</div>
+        <img :src="user.userImg" alt="Profile" class="profile-image" />
+        <div class="user-name">{{ user.userName }}</div>
+        <div class="user-points">포인트: {{ user.totalPoint }}</div>
       </div>
     </div>
 
@@ -37,24 +37,28 @@
 import { ref, onMounted } from "vue";
 import { Bar } from "vue-chartjs";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
+import axios from 'axios';
 
 // Chart.js 플러그인 등록
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-// 유저 데이터
-const users = [
-  { name: "정단호", points: 30000, rank: 1, profile: "/path/to/profile1.png", background: "linear-gradient(135deg, #FFC371, #FF5F6D)" },
-  { name: "홍세영", points: 20000, rank: 2, profile: "/path/to/profile2.png", background: "linear-gradient(135deg, #84fab0, #8fd3f4)" },
-  { name: "황현석", points: 15000, rank: 3, profile: "/path/to/profile3.png", background: "linear-gradient(135deg, #a18cd1, #fbc2eb)" },
-  { name: "정예슬", points: 10000, rank: 4, background: "#E3E3E3" },
-  { name: "이조은", points: 8000, rank: 5, background: "#E8EAF6" },
-];
 
-// 상위 3등 데이터
-const topThree = users.slice(0, 3);
+
+// 유저 데이터
+const teamNo = ref(3); 
+const users=ref([]);
+
+const getBackgroundStyle = (index) => {
+  if (index === 0) return "linear-gradient(135deg, #FFC371, #FF5F6D)";
+  if (index === 1) return "linear-gradient(135deg, #84fab0, #8fd3f4)";
+  if (index === 2) return "linear-gradient(135deg, #a18cd1, #fbc2eb)";
+  return "linear-gradient(135deg, #ffffff, #eeeeee)"; // 기본 배경
+};
+
+
 
 // 4등부터 6등 데이터
-const otherRanks = users.slice(3, 5);
+const otherRanks = users.value.slice(3, 5);
 
 // 차트 데이터 초기화
 const chartData = ref(null);
@@ -85,8 +89,25 @@ const chartOptions = ref({
   },
 });
 
+
+const fetchTeamScore = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/team/score/${teamNo.value}`);
+    users.value = response.data; // API 응답 데이터를 teamScore에 저장
+    for(let i=0;i<users.value.length;i++) {
+      users.value[i].userImg=new URL(users.value[i].userImg, import.meta.url).href;
+
+    }
+    console.log("Fetched team score:", users.value);
+  } catch (error) {
+    console.error("Failed to fetch team score:", error);
+  }
+};
+
+
 // 컴포넌트가 마운트되었을 때 데이터 설정
 onMounted(() => {
+  fetchTeamScore();
   chartData.value = {
     labels: otherRanks.map((user) => `${user.rank}위 ${user.name}`),
     datasets: [

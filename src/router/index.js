@@ -13,6 +13,7 @@ import Challenge from '../pages/challenge/Challenge.vue'
 import ChallengeInfo from '../pages/challenge/ChallengeInfo.vue'
 import ChallengeDetail from '../pages/challenge/ChallengeDetail.vue'
 import ChallengeStart from '../pages/challenge/ChallengeStart.vue'
+import ChallengeCreate from '../pages/challenge/ChallengeCreate.vue'
 
 const routes = [
 
@@ -21,10 +22,11 @@ const routes = [
   { path: '/findMistake', name: 'findMistake', component: FindMistake },
   { path: '/findMistakeResult', name: 'findMistakeResult', component: FindMistakeResult },
 
-  { path: '/challenge', name: 'challenge', component: Challenge },
-  { path: '/challenge/info', name: 'challengeInfo', component: ChallengeInfo },
-  { path: '/challenge/detail', name: 'challengeDetail', component: ChallengeDetail },
-  { path: '/challenge/start', name: 'challengeStart', component: ChallengeStart },
+  { path: '/challenge', name: 'Challenge', component: Challenge },
+  { path: '/challenge/info', name: 'ChallengeInfo', component: ChallengeInfo },
+  { path: '/challenge/detail', name: 'ChallengeDetail', component: ChallengeDetail },
+  { path: '/challenge/start', name: 'ChallengeStart', component: ChallengeStart },
+  { path: '/challenge/create', name: 'ChallengeCreate', component: ChallengeCreate },
   { path: '/userjoin', name: 'UserJoin', component: UserJoin },
   { path: '/login', name: 'Login', component: Login },
   { path: '/mypage', name: 'Mypage', component: Mypage },

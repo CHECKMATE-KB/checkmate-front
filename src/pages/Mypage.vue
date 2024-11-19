@@ -18,10 +18,10 @@
             <p><strong>이메일:</strong> {{ profile.email }}</p>
             <i class="edit-icon" @click="openEditPopup">✏️</i>
           </div>
-          <div class="info-row">
+          <!-- <div class="info-row">
             <p><strong>연락처:</strong> {{ profile.phone }}</p>
             <i class="edit-icon" @click="openEditPopup">✏️</i>
-          </div>
+          </div> -->
           <div class="info-row">
             <p><strong>포인트:</strong> {{ profile.points }}</p>
             <button class="convert-btn" @click="openConvertPopup">전환하기</button>
@@ -52,14 +52,23 @@
           <h2>등록된 카드목록</h2>
           <button class="add-card-btn" @click="openCardModal">카드 등록</button>
         </div>
-        <div class="patient-list">
+        <!-- <div class="patient-list">
           <div class="patient-card" v-for="(Credit, index) in limitedCredit" :key="index">
             <button class="delete-card-btn" @click="removeCard(index)">X</button>
             <h3>{{ Credit.cardHolder }}</h3>
             <p><strong>카드 번호:</strong> {{ Credit.cardNumber }}</p>
             <p><strong>유효 기간:</strong> {{ Credit.expiration }}</p>
           </div>
+        </div> -->
+        <div class="patient-list">
+          <div class="patient-card" v-for="(card, index) in Credit" :key="index">
+            <button class="delete-card-btn" @click="removeCard(index)">X</button>
+            <h3>{{ card.cardHolder }}</h3>
+            <p><strong>카드 번호:</strong> {{ card.cardNumber }}</p>
+            <p><strong>유효 기간:</strong> {{ card.expiration }}</p>
+          </div>
         </div>
+
       </div>
     </main>
 
@@ -119,6 +128,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import axios from "axios";
 import { Calendar } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import CreditCard from "./CreditCard.vue";
@@ -133,106 +143,65 @@ import {
   CategoryScale,
 } from "chart.js";
 
-
-const calendar = ref(null);
-// 이벤트 데이터
-const events = ref([
-  { title: "수입 100,000원", start: "2024-11-02" },
-  { title: "지출 5,000원", start: "2024-11-13" },
-  { title: "지출 10,000원", start: "2024-11-20" },
-]);
-
-
-
 // Chart.js 플러그인 등록
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
+/* --------------------------
+   사용자 정보 관리
+-------------------------- */
+const profile = ref({
+  nickname: "",
+  email: "",
+  phone: "",
+  points: 0,
+});
 
-// 차트 데이터와 옵션
-const chartData = ref(null); // 초기값을 null로 설정
-const chartOptions = ref(null);
+const fetchUserProfile = async () => {
+  const userNo = localStorage.getItem("userNo");
+  if (!userNo) {
+    console.error("User number not found in localStorage.");
+    return;
+  }
 
-const setupChartData = () => {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  try {
+    const response = await axios.get(`/api/user/info/${userNo}`);
+    const userData = response.data;
 
-  const gradient1 = ctx.createLinearGradient(0, 0, 0, 400);
-  gradient1.addColorStop(0, "#FF9A9E");
-  gradient1.addColorStop(1, "#FAD0C4");
-
-  const gradient2 = ctx.createLinearGradient(0, 0, 0, 400);
-  gradient2.addColorStop(0, "#FBC2EB");
-  gradient2.addColorStop(1, "#A6C1EE");
-
-  const gradient3 = ctx.createLinearGradient(0, 0, 0, 400);
-  gradient3.addColorStop(0, "#96E6A1");
-  gradient3.addColorStop(1, "#D4FC79");
-
-  const gradient4 = ctx.createLinearGradient(0, 0, 0, 400);
-  gradient4.addColorStop(0, "#84FAB0");
-  gradient4.addColorStop(1, "#8FD3F4");
-
-  const gradient5 = ctx.createLinearGradient(0, 0, 0, 400);
-  gradient5.addColorStop(0, "#A18CD1");
-  gradient5.addColorStop(1, "#FBC2EB");
-
-  chartData.value = {
-    labels: ["식비", "교통비", "엔터테인먼트", "쇼핑", "기타"],
-    datasets: [
-      {
-        label: "카테고리별 소비",
-        data: [200, 150, 100, 250, 50],
-        backgroundColor: [
-          gradient1,
-          gradient2,
-          gradient3,
-          gradient4,
-          gradient5,
-        ],
-        hoverBackgroundColor: [
-          gradient1,
-          gradient2,
-          gradient3,
-          gradient4,
-          gradient5,
-        ],
-        borderWidth: 2,
-        borderColor: "#fff",
-      },
-    ],
-  };
-
-  chartOptions.value = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-        labels: {
-          font: {
-            size: 14,
-          },
-          color: "#333",
-        },
-      },
-      title: {
-        display: true,
-        text: "카테고리별 소비 내역",
-        color: "#333",
-        font: {
-          size: 20,
-        },
-      },
-    },
-  };
+    profile.value = {
+      nickname: userData.nickname || "닉네임 없음",
+      email: userData.email || "이메일 없음",
+      phone: userData.phone || "연락처 없음",
+      points: userData.point || 0,
+      userImg: userData.userImg || "default.png",
+    };
+  } catch (error) {
+    console.error("Failed to fetch user profile:", error);
+  }
 };
 
+/* --------------------------
+   수정 팝업 관련 상태 관리
+-------------------------- */
+const isPopupVisible = ref(false);
+const editProfile = ref({ ...profile.value });
 
-// onMounted에서 차트 데이터 초기화
-onMounted(() => {
-  // 차트 데이터 초기화
-  setupChartData();
+const openEditPopup = () => {
+  editProfile.value = { ...profile.value };
+  isPopupVisible.value = true;
+};
 
-  // 캘린더 초기화
+const closePopup = () => {
+  isPopupVisible.value = false;
+};
+
+/* --------------------------
+   캘린더 초기화
+-------------------------- */
+const calendar = ref(null);
+const events = ref([]); // 초기값은 빈 배열
+
+
+const initializeCalendar = () => {
   if (calendar.value) {
     const calendarEl = calendar.value;
 
@@ -246,7 +215,7 @@ onMounted(() => {
         center: "title",
         right: "",
       },
-      events: events.value, // events를 ref로 사용
+      events: events.value, // 동적으로 업데이트된 이벤트 사용
       eventClick: (info) => {
         alert(`이벤트 제목: ${info.event.title}`);
       },
@@ -254,109 +223,157 @@ onMounted(() => {
 
     fullCalendar.render();
 
-    // onBeforeUnmount를 통한 정리 작업
+    // 캘린더 파괴
     onBeforeUnmount(() => {
       fullCalendar.destroy();
     });
   }
-});
-
-// 프로필 데이터
-const profile = ref({
-  nickname: "딴호호호우",
-  email: "정단호@gmail.com",
-  phone: "010-1234-1234",
-  points: 1000,
-});
-
-const isConvertPopupVisible = ref(false);
-const convertAmount = ref(0);
-const convertError = ref("");
-
-// 전환 팝업 열기
-const openConvertPopup = () => {
-  convertAmount.value = 0;
-  convertError.value = "";
-  isConvertPopupVisible.value = true;
 };
 
-// 전환 팝업 닫기
-const closeConvertPopup = () => {
-  isConvertPopupVisible.value = false;
+
+/* --------------------------
+   차트 데이터 초기화
+-------------------------- */
+const chartData = ref(null);
+const chartOptions = ref(null);
+
+const setupChartData = (categoryData) => {
+  chartData.value = {
+    labels: ["식비", "교통비", "엔터테인먼트", "쇼핑", "기타"],
+    datasets: [
+      {
+        label: "카테고리별 소비",
+        data: [
+          categoryData[1] || 0,
+          categoryData[2] || 0,
+          categoryData[3] || 0,
+          categoryData[4] || 0,
+          categoryData[5] || 0,
+        ],
+        backgroundColor: ["#FF9A9E", "#FBC2EB", "#96E6A1", "#84FAB0", "#A18CD1"],
+        hoverBackgroundColor: ["#FF9A9E", "#FBC2EB", "#96E6A1", "#84FAB0", "#A18CD1"],
+        borderWidth: 2,
+        borderColor: "#fff",
+      },
+    ],
+  };
+
+  chartOptions.value = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+        labels: {
+          font: { size: 14 },
+          color: "#333",
+        },
+      },
+      title: {
+        display: true,
+        text: "카테고리별 소비 내역",
+        color: "#333",
+        font: { size: 20 },
+      },
+    },
+  };
 };
 
-// 포인트 전환
-const convertPoints = () => {
-  if (convertAmount.value <= 0) {
-    convertError.value = "전환할 포인트를 1 이상 입력하세요.";
+/* --------------------------
+   결제 내역 가져오기
+-------------------------- */
+const fetchBuyHistory = async () => {
+  const userNo = localStorage.getItem("userNo");
+  if (!userNo) {
+    console.error("User number not found in localStorage.");
     return;
   }
 
-  if (convertAmount.value > profile.value.points) {
-    convertError.value = "보유 포인트를 초과할 수 없습니다.";
-    return;
-  }
+  try {
+    const response = await axios.get(`/api/buy/${userNo}`);
+    const buyHistory = response.data;
 
-  // 포인트 전환 로직
-  profile.value.points -= convertAmount.value;
-  alert(`${convertAmount.value} 포인트가 성공적으로 전환되었습니다.`);
-  closeConvertPopup();
+    // 카테고리별 소비 금액 집계
+    const categoryData = {};
+    buyHistory.forEach((history) => {
+      const category = parseInt(history.historyCategory, 10);
+      const price = parseInt(history.price, 10);
+      if (!categoryData[category]) {
+        categoryData[category] = 0;
+      }
+      categoryData[category] += price;
+    });
+
+    setupChartData(categoryData);
+
+    // 소비 내역을 캘린더 이벤트로 변환
+    const calendarEvents = buyHistory.map((history) => ({
+      title: `₩${history.price} - 카테고리 ${history.historyCategory}`,
+      start: new Date(history.historyDate).toISOString().split("T")[0], // 날짜만 사용
+    }));
+
+    events.value = calendarEvents; // 이벤트 데이터 업데이트
+    console.log(events.value); // fetchBuyHistory 호출 후 출력
+
+  } catch (error) {
+    console.error("Failed to fetch buy history:", error);
+  }
 };
 
-// 팝업 상태 관리
-const isPopupVisible = ref(false);
-const editProfile = ref({ ...profile.value });
+
+/* --------------------------
+   카드 목록 가져오기
+-------------------------- */
 const isCardModalVisible = ref(false);
+const Credit = ref([]);
+const fetchCards = async () => {
+  const userNo = localStorage.getItem("userNo");
+  if (!userNo) {
+    console.error("User number not found in localStorage.");
+    return;
+  }
 
-// 팝업 열기
-const openEditPopup = () => {
-  editProfile.value = { ...profile.value };
-  isPopupVisible.value = true;
+  try {
+    const response = await axios.get(`/api/card/list/${userNo}`);
+    Credit.value = response.data.map((card) => ({
+      cardHolder: card.cardName,
+      cardNumber: card.cardNumber,
+      expiration: card.expiryDate,
+    }));
+  } catch (error) {
+    console.error("Failed to fetch cards:", error);
+  }
 };
 
-// 팝업 닫기
-const closePopup = () => {
-  isPopupVisible.value = false;
+
+const removeCard = (index) => {
+  Credit.value.splice(index, 1);
 };
 
+const addCard = (card) => {
+  Credit.value.push(card);
+  isCardModalVisible.value = false;
+};
 
-// 카드 등록 모달 열기
 const openCardModal = () => {
   isCardModalVisible.value = true;
 };
 
-// 카드 등록 모달 닫기
 const closeCardModal = () => {
   isCardModalVisible.value = false;
 };
 
-
-// 프로필 저장
-const saveProfile = () => {
-  profile.value = { ...editProfile.value };
-  closePopup();
-};
-
-// 카드(카드 정보 출력)
-const Credit = ref([]);
-
-// 제한된 카드 리스트
-const limitedCredit = computed(() => Credit.value.slice(0, 3));
-
-// 카드 삭제 함수
-const removeCard = (index) => {
-  Credit.value.splice(index, index + 1);
-};
-
-// 카드 추가 함수
-const addCard = (card) => {
-  Credit.value.push(card);
-  closeCardModal();
-};
-
-
+/* --------------------------
+   컴포넌트 초기화
+-------------------------- */
+onMounted(async () => {
+  await fetchUserProfile(); // 사용자 프로필 로드
+  await fetchBuyHistory(); // 소비 내역 로드
+  initializeCalendar(); // 캘린더 초기화
+  await fetchCards(); 
+});
 
 </script>
+
 
 <style scoped>
 /* 전체 배경 설정 */
@@ -435,8 +452,10 @@ const addCard = (card) => {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height:260px;
+  /* height: 260px; 삭제 */
+  overflow: hidden; /* 추가: 콘텐츠가 잘리지 않도록 */
 }
+
 .section-header {
   display: flex;
   justify-content: space-between;

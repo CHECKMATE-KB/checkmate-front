@@ -124,6 +124,7 @@ input {
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { storenickName } from '@/stores/userState'; // 전역 상태 가져오기
 
 // Vue Router 사용
 const router = useRouter();
@@ -148,18 +149,23 @@ const handleLogin = async () => {
 
     try {
         const response = await axios.post('api/user/login', user);
-        const { token, userNo } = response.data; // 서버로부터 받은 토큰과 userNo
-        alert('로그인에 성공했습니다!');
+        const { token, userNo, nickName } = response.data; // 서버로부터 받은 토큰과 userNo
         
         // 토큰을 로컬 스토리지에 저장
         localStorage.setItem('token', token);
         localStorage.setItem('userNo', userNo);
+        localStorage.setItem('nickName', nickName);
+        storenickName.value = nickName; // 전역 상태 업데이트
+        
+        alert('로그인에 성공했습니다!');
 
         // 로그인 성공 후 메인 페이지로 이동
         router.push('/');
+
     } catch (error) {
             console.error('로그인 실패:', error.response?.data || error.message);
-            alert(error.response?.data || '로그인에 실패했습니다. 서버 문제일 수 있습니다. 나중에 다시 시도해주세요.');
+            alert('로그인에 실패했습니다. 아이디나 비밀번호가 다릅니다.');
     }
 };
 </script>
+

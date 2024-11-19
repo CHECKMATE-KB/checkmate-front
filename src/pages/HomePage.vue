@@ -272,7 +272,7 @@ html, body {
 .quiz-image img {
   width: 658px;
   position: relative;
-  margin-top: 250px; /* 이미지 아래로 200px 내려줌 */
+  margin-top: 250px;
 }
 
 .quiz-text {

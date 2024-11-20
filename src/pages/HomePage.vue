@@ -328,7 +328,6 @@ onMounted(() => {
   position: relative;
   margin-top: 0; /* 이미지 위치 조정 */
   left: 100px;
-
 }
 
 .quiz-image .primary-image {
@@ -341,7 +340,7 @@ onMounted(() => {
 .quiz-image .secondary-image {
   width: 900px; /* 기존보다 크기 증가 */
   position: relative;
-  margin-top: 20px;
+  /*margin-top: 20px;*/
   left: 90px;
   bottom: 150px;
 }
@@ -375,13 +374,23 @@ onMounted(() => {
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
+/*
 .additional-section {
   text-align: center;
-  margin: 20px 0; /* 위아래 여백 추가 */
-  background: url("@/assets/images/mainbg.png") no-repeat center center / cover; /* 배경 이미지 설정 */
-  padding: 20px; /* 내부 여백 추가 */
+  margin: 20px 0; 
+  background: url("@/assets/images/mainbg.png") no-repeat center center / cover;
+  padding: 20px; 
   position: relative;
   top: -360px;
+}
+*/
+
+.additional-section {
+  text-align: center;
+  margin: 0; /* 추가 간격 제거 */
+  padding: 20px; /* 내부 여백만 유지 */
+  background: url("@/assets/images/mainbg.png") no-repeat center center / cover;
+  position: relative;
 }
 
 .additional-section::before {

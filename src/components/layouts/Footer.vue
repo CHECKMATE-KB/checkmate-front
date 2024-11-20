@@ -26,6 +26,7 @@ export default {
 </script>
 
 <style scoped>
+/*
 .footer {
   background-color: #6e6e6e;
   color: white;
@@ -34,6 +35,17 @@ export default {
   font-family: 'Arial', sans-serif;
   display: flex;
   align-items: center;
+}
+*/
+.footer {
+  background-color: #6e6e6e;
+  color: white;
+  padding: 50px 0; /* 상하 여백만 설정 */
+  font-family: 'Arial', sans-serif;
+  width: 100%; /* 100%로 설정 */
+  position: relative; /* 명시적으로 relative 설정 */
+  left: 0; /* 화면의 가장 왼쪽부터 시작 */
+  margin: 0; /* margin 초기화 */
 }
 
 .footer-container {

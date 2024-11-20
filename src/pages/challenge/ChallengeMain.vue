@@ -7,7 +7,8 @@
         class="card" 
         :style="{ backgroundImage: `url(${backgroundImage})` }">
         <div class="overlay">
-          <img :src="participant.userImg" alt="Participant" class="participant-image" />
+          <img v-if="participant.userImg" :src="participant.userImg" alt="Participant" class="participant-image" />
+          <!-- <img :src="require('participant.userImg')" alt="Participant" class="participant-image" /> -->
           <h3 class="participant-name">{{ participant.userName }}</h3>
         </div>
       </div>
@@ -26,17 +27,15 @@ import axios from 'axios';
 const participants = ref([]);
 const teamNo = ref(3);
 
-// const participants = [
-//   { id: 1, name: "정단호", image: "https://via.placeholder.com/100" },
-//   { id: 2, name: "홍세영", image: "https://via.placeholder.com/100" },
-//   { id: 3, name: "황현석", image: "https://via.placeholder.com/100" },
-//   { id: 4, name: "정예슬", image: "https://via.placeholder.com/100" },
-//   { id: 5, name: "이조은", image: "https://via.placeholder.com/100" },
-// ];
 const fetchTeamMembers = async () => {
   try {
     const response = await axios.get(`http://localhost:8080/api/team/member/${teamNo.value}`);
     participants.value = response.data; // API에서 받아온 데이터를 저장
+
+    for(let i=0;i<participants.value.length;i++) {
+      participants.value[i].userImg=new URL(participants.value[i].userImg, import.meta.url).href;
+
+    }
     console.log("Fetched team members:", participants.value);
   } catch (error) {
     console.error("Failed to fetch team members:", error);

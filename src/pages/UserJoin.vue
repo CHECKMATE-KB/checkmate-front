@@ -355,11 +355,12 @@ import { storeUserImg } from '../stores/userState';
 
 // 프로필 이미지 후보 경로 배열
 const profileImages = [
-    '../../public/images/profile/bus.gif',
-    '../../public/images/profile/cafeico2.gif',
-    '../../public/images/profile/food.gif',
-    '../../public/images/profile/party.gif',
-    '../../public/images/profile/savico.gif',
+    '../../src/assets/images/profiles/profile1.png',
+    '../../src/assets/images/profiles/profile2.png',
+    '../../src/assets/images/profiles/profile3.png',
+    '../../src/assets/images/profiles/profile4.png',
+    '../../src/assets/images/profiles/profile5.png',
+    '../../src/assets/images/profiles/profile6.png',
 ];
 
 // 프로필 이미지 선택 함수

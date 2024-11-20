@@ -90,7 +90,7 @@ export default {
 
     // 다음 문제로 가기 버튼 클릭 시 QuizPage3로 이동
     const goToQuizPage3 = () => {
-      router.push({name: 'quizPage3'}); // QuizPage3로 이동
+      router.push({name: "finalQuizResult"}); // QuizPage3로 이동
     };
 
     // 페이지 로딩 시 이미지 설정 및 틀린 부분 데이터 가져오기
@@ -98,6 +98,11 @@ export default {
       mistakes.value = JSON.parse(route.query.mistakes || '[]');
       currentImage1.value = images[questionIndex].image1;
       currentImage2.value = images[questionIndex].image2;
+
+      if (isCorrect.value) {
+        const currentCount = parseInt(localStorage.getItem("correctAnswers")) || 0;
+        localStorage.setItem("correctAnswers", currentCount + 1);
+      }
     });
 
     return {
@@ -106,7 +111,7 @@ export default {
       mistakes,
       correctMistakes,
       isCorrect,
-      goToQuizPage3, // QuizPage3로 가는 메서드 반환
+      goToQuizPage3, 
       handleImageClick,
     };
   },

@@ -190,10 +190,6 @@ const createChallenge = () => {
 };
 </script>
 
-<style scoped>
-/* 기존 스타일 유지 */
-</style>
-
 
 <style scoped>
 /* 메인 컨테이너 */
@@ -388,4 +384,5 @@ button:hover {
 .challenge-card button:hover {
   background-color: #c0392b;
 }
+
 </style>

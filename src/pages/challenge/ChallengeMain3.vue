@@ -191,9 +191,8 @@ onMounted(() => {
 }
 
 .profile-image {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
+  width: 150px;
+  height: 150px;
   margin-bottom: 10px;
 }
 

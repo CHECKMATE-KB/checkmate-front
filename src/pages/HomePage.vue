@@ -350,7 +350,7 @@ const scrollToContent = () => {
   background: url("@/assets/images/mainbg.png") no-repeat center center / cover; /* 배경 이미지 설정 */
   padding: 20px; /* 내부 여백 추가 */
   position: relative;
-  top: -360px; /* 배경을 위로 올리기 */
+  top: -360px;
 }
 
 .additional-section::before {

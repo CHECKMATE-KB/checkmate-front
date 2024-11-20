@@ -5,7 +5,7 @@
     <!-- 상단 카테고리 아이콘 -->
     <div class="category-container">
       <div
-        v-for="category in categories"
+        v-for="category in categories_imgs"
         :key="category.name"
         class="category-item"
         :class="{ active: selectedCategory === category.name }"
@@ -24,7 +24,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import axios from 'axios';
 import { Bar } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -37,55 +38,71 @@ import {
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const categories = [
+const categories_imgs = [
   { name: "전체", icon: "/images/savico.gif" },
   { name: "음료", icon: "/images/cafeico2.gif" },
   { name: "교통", icon: "/images/bus.gif" },
   { name: "식비", icon: "/images/food.gif" },
   { name: "유흥", icon: "/images/party.gif" },
 ];
-
-const userData = {
-  전체: [
-    { name: "정단호", total: 5000 },
-    { name: "홍세영", total: 6500 },
-    { name: "황현석", total: 4700 },
-    { name: "정예슬", total: 7000 },
-    { name: "이조은", total: 4800 },
-  ],
-  음료: [
-    { name: "정단호", amount: 1000 },
-    { name: "홍세영", amount: 2000 },
-    { name: "황현석", amount: 1500 },
-    { name: "정예슬", amount: 800 },
-    { name: "이조은", amount: 600 },
-  ],
-  교통: [
-    { name: "정단호", amount: 2000 },
-    { name: "홍세영", amount: 1000 },
-    { name: "황현석", amount: 1200 },
-    { name: "정예슬", amount: 1800 },
-    { name: "이조은", amount: 1400 },
-  ],
-  식비: [
-    { name: "정단호", amount: 1500 },
-    { name: "홍세영", amount: 2500 },
-    { name: "황현석", amount: 1300 },
-    { name: "정예슬", amount: 2000 },
-    { name: "이조은", amount: 1800 },
-  ],
-  유흥: [
-    { name: "정단호", amount: 500 },
-    { name: "홍세영", amount: 1000 },
-    { name: "황현석", amount: 700 },
-    { name: "정예슬", amount: 1400 },
-    { name: "이조은", amount: 1000 },
-  ],
+const raw = ref([]);
+// 1. 음료, 2. 교통, 3. 식비, 4. 유흥, 5. 미용 6. 전체
+const userData = ref({
+  전체: [],
+  음료: [],
+  교통: [],
+  식비: [],
+  유흥: [],
+  미용: [],
+});
+const categories = {
+  1: "음료",
+  2: "교통",
+  3: "식비",
+  4: "유흥",
+  5: "미용",
 };
-
+// const userData = {
+//   전체: [
+//     { name: "정단호", total: 5000 },
+//     { name: "홍세영", total: 6500 },
+//     { name: "황현석", total: 4700 },
+//     { name: "정예슬", total: 7000 },
+//     { name: "이조은", total: 4800 },
+//   ],
+//   음료: [
+//     { name: "정단호", amount: 1000 },
+//     { name: "홍세영", amount: 2000 },
+//     { name: "황현석", amount: 1500 },
+//     { name: "정예슬", amount: 800 },
+//     { name: "이조은", amount: 600 },
+//   ],
+//   교통: [
+//     { name: "정단호", amount: 2000 },
+//     { name: "홍세영", amount: 1000 },
+//     { name: "황현석", amount: 1200 },
+//     { name: "정예슬", amount: 1800 },
+//     { name: "이조은", amount: 1400 },
+//   ],
+//   식비: [
+//     { name: "정단호", amount: 1500 },
+//     { name: "홍세영", amount: 2500 },
+//     { name: "황현석", amount: 1300 },
+//     { name: "정예슬", amount: 2000 },
+//     { name: "이조은", amount: 1800 },
+//   ],
+//   유흥: [
+//     { name: "정단호", amount: 500 },
+//     { name: "홍세영", amount: 1000 },
+//     { name: "황현석", amount: 700 },
+//     { name: "정예슬", amount: 1400 },
+//     { name: "이조은", amount: 1000 },
+//   ],
+// };
+// 사용자별 데이터를 누적
 const selectedCategory = ref("전체");
 const chartData = ref(null);
-
+const teamNo= ref(3);
 const chartOptions = ref({
   responsive: true,
   plugins: {
@@ -115,6 +132,60 @@ const chartOptions = ref({
   },
 });
 
+
+// 데이터 변환 함수
+const transformData = (data) => {
+  const result = {
+    "전체": [],
+    "음료": [],
+    "교통": [],
+    "식비": [],
+    "유흥": [],
+    "미용": [],
+  };
+
+  // 사용자별 데이터를 누적
+  const userTotals = {};
+
+  data.forEach((item) => {
+    const { userName, spendTotal, category } = item;
+    const categoryName = categories[category] || "전체";
+
+    // 전체 카테고리 업데이트
+    if (!userTotals[userName]) {
+      userTotals[userName] = 0;
+    }
+    userTotals[userName] += spendTotal;
+
+    // 각 카테고리별 데이터 추가
+    if (categoryName !== "전체") {
+      result[categoryName].push({ name: userName, amount: spendTotal });
+    }
+  });
+
+  // 전체 카테고리 데이터 생성
+  for (const [name, total] of Object.entries(userTotals)) {
+    result["전체"].push({ name, total });
+  }
+
+  return result;
+};
+
+
+const fetchTeamSpendData = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/team/spend/category/${teamNo.value}`);
+    raw.value = response.data; // API 응답 데이터를 teamSpendData에 저장
+    userData.value=transformData(raw.value);
+    updateChartData(selectedCategory.value);
+    console.log(userData.value);
+    console.log("Fetched team spend data:", raw.value);
+  } catch (error) {
+    console.error("Failed to fetch team spend data:", error);
+  }
+};
+
+
 const createGradient = (ctx, index) => {
   const gradient = ctx.createLinearGradient(0, 0, 0, 400);
   const colors = [
@@ -129,13 +200,13 @@ const createGradient = (ctx, index) => {
   return gradient;
 };
 
-const selectCategory = (category) => {
-  selectedCategory.value = category;
-  updateChartData(category);
+const selectCategory = (category_name) => {
+  selectedCategory.value = category_name;
+  updateChartData(category_name);
 };
 
-const updateChartData = (category) => {
-  const categoryData = userData[category];
+const updateChartData = (category_name) => {
+  const categoryData = userData.value[category_name];
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
   chartData.value = {
@@ -143,7 +214,7 @@ const updateChartData = (category) => {
     datasets: [
       {
         label: "소비 금액",
-        data: category === "전체" ? categoryData.map((user) => user.total) : categoryData.map((user) => user.amount),
+        data: category_name === "전체" ? categoryData.map((user) => user.total) : categoryData.map((user) => user.amount),
         backgroundColor: categoryData.map((_, index) => createGradient(ctx, index)),
         borderColor: "rgba(0, 0, 0, 0.1)",
         borderWidth: 1,
@@ -152,8 +223,11 @@ const updateChartData = (category) => {
     ],
   };
 };
+onMounted(() => {
+  fetchTeamSpendData();
+  
+});
 
-updateChartData(selectedCategory.value);
 </script>
 
 <style>

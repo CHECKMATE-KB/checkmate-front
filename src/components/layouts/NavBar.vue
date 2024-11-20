@@ -43,13 +43,16 @@ onMounted(() => {
 watchEffect(() => {
   console.log('userNo 상태 변경:', storenickName.value);
 });
+
+// 프로필 이미지 상태 가져오기
+import { storeUserImg } from '../../stores/userState';
 </script>
 
 <template>
   <header class="header">
     <div class="logo">
       <!-- 로고 영역 -->
-      <img src="@/assets/images/cmlogo2.png" alt="Logo" />
+      <router-link to="/"><img src="@/assets/images/cmlogo2.png" alt="Logo" /></router-link>
     </div>
     <div class="menu-auth-container">
       <nav class="nav">
@@ -64,7 +67,9 @@ watchEffect(() => {
       <div class="auth-buttons">
         <!-- 로그인 상태에 따른 버튼 표시 -->
         <template v-if="storenickName">
-          <span class="welcome-message"> {{ storenickName }}님 환영합니다.</span>
+          <span class="welcome-message"> 
+            <img :src="storeUserImg" width="30px">
+            {{ storenickName }}님 환영합니다.</span>
           <button class="logout-button" @click="handleLogout">로그아웃</button>
         </template>
         <template v-else>

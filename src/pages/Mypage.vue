@@ -8,7 +8,7 @@
     </header>
     <main class="content">
       <div class="profile-section">
-        <img :src=profile.userImg alt="Profile" class="profile-image" />
+        <img :src="profile.userImg" alt="Profile" class="profile-image" />
         <div class="contact-info">
           <div class="info-row">
             <p><strong>닉네임:</strong> {{ profile.nickname }}</p>
@@ -18,15 +18,29 @@
             <p><strong>이메일:</strong> {{ profile.email }}</p>
             <i class="edit-icon" @click="openEditPopup">✏️</i>
           </div>
-          <!-- <div class="info-row">
-            <p><strong>연락처:</strong> {{ profile.phone }}</p>
-            <i class="edit-icon" @click="openEditPopup">✏️</i>
-          </div> -->
           <div class="info-row">
             <p><strong>포인트:</strong> {{ profile.points }}</p>
-            <button class="convert-btn" @click="openConvertPopup">전환하기</button>
+            <button class="convert-btn" @click="openConvertPopup">포인트리로 전환하기</button>
           </div>
         </div>
+      </div>
+
+      <!-- 포인트 전환 팝업 -->
+      <div class="popup-overlay" v-if="isConvertPopupVisible">
+        <div class="popup">
+          <h3>포인트 전환</h3>
+          <p>현재 모든 포인트를 전환하시겠습니까?</p>
+          <div class="popup-buttons">
+            <button @click="convertPoints">확인</button>
+            <button @click="closeConvertPopup">취소</button>
+          </div>
+          <p class="error-message" v-if="convertError">{{ convertError }}</p>
+        </div>
+      </div>
+
+      <!-- 전환 성공 애니메이션 -->
+      <div class="success-animation" v-if="isAnimationVisible">
+        🎉 모든 포인트를 포인트리로 전환했습니다! 🎉
       </div>
 
       <!-- 두 개의 카드 섹션 -->
@@ -94,7 +108,7 @@
       </div>
     </main>
 
-    <div class="popup-overlay" v-if="isConvertPopupVisible">
+    <!-- <div class="popup-overlay" v-if="isConvertPopupVisible">
         <div class="popup">
           <h3>포인트 전환</h3>
           <label>
@@ -107,7 +121,7 @@
           </div>
           <p class="error-message" v-if="convertError">{{ convertError }}</p>
         </div>
-      </div>
+      </div> -->
 
     <!-- 수정 팝업 -->
     <div class="popup-overlay" v-if="isPopupVisible">
@@ -358,6 +372,52 @@ const fetchBuyHistory = async () => {
   } catch (error) {
     console.error("Failed to fetch buy history:", error);
   }
+};
+
+/* --------------------------
+   포인트 전환하기
+-------------------------- */
+
+const isConvertPopupVisible = ref(false);
+const convertAmount = ref(0);
+const convertError = ref("");
+const isAnimationVisible = ref(false); // 애니메이션 표시 여부
+
+const closeConvertPopup = () => {
+  isConvertPopupVisible.value = false; // 팝업 닫기
+};
+
+
+const openConvertPopup = () => {
+  isConvertPopupVisible.value = true;
+};
+
+const convertPoints = async () => {
+  const userNo = localStorage.getItem("userNo");
+  if (!userNo) {
+    convertError.value = "User ID not found.";
+    return;
+  }
+
+  try {
+    await axios.get(`/api/user/point/${userNo}`); // 백엔드 호출
+    profile.value.points = 0; // 프론트에서 포인트 업데이트
+
+    // 애니메이션 표시
+    isConvertPopupVisible.value = false;
+    showSuccessAnimation();
+  } catch (error) {
+    convertError.value = "포인트 전환 중 오류가 발생했습니다.";
+    console.error("Failed to convert points:", error);
+  }
+};
+
+// 애니메이션 표시 함수
+const showSuccessAnimation = () => {
+  isAnimationVisible.value = true;
+  setTimeout(() => {
+    isAnimationVisible.value = false;
+  }, 3000); // 3초 동안 애니메이션 표시
 };
 
 
@@ -806,7 +866,7 @@ onMounted(async () => {
 
 .convert-btn {
   margin-left: 10px;
-  background-color: #4caf50;
+  background-color: #F8A70C;
   color: white;
   padding: 5px 10px;
   border: none;
@@ -816,7 +876,7 @@ onMounted(async () => {
   margin-bottom:15px;
 }
 .convert-btn:hover {
-  background-color: #45a049;
+  background-color: #FAB809;
 }
 
 /* 오류 메시지 스타일 */
@@ -870,7 +930,7 @@ onMounted(async () => {
 
 /* 버튼 스타일 */
 .tip-actions button {
-  background-color: #4caf50;
+  background-color: #F8A70C;
   color: white;
   border: none;
   border-radius: 5px;
@@ -881,7 +941,7 @@ onMounted(async () => {
 }
 
 .tip-actions button:hover {
-  background-color: #45a049;
+  background-color: #F8A70C;
 }
 
 /* 카드 스타일 */
@@ -895,4 +955,40 @@ onMounted(async () => {
   color: #333;
   width:500px;
 }
+
+.success-animation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #d1d127;
+  color: white;
+  padding: 20px 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeInOut 3s ease-in-out; /* 애니메이션 효과 */
+  font-size: 20px;
+  z-index: 1000;
+  text-align: center;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+}
+
 </style>

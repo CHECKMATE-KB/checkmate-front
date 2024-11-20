@@ -18,6 +18,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { Doughnut } from "vue-chartjs";
+import axios from "axios";
 import {
   Chart as ChartJS,
   Title,
@@ -54,7 +55,25 @@ const chartOptions = ref({
   },
 });
 
-// 그라디언트 색상 적용
+// 사용자 정보
+const userNo = localStorage.getItem("userNo"); // localStorage에서 userNo 가져오기
+
+// 백엔드 포인트 업데이트 함수
+const updateUserPoints = async () => {
+  if (!userNo) {
+    console.error("userNo가 없습니다. 로그인 후 다시 시도하세요.");
+    return;
+  }
+  
+  try {
+    const response = await axios.get(`/api/quiz/update-point/${userNo}/${correctAnswers.value}`);
+    console.log(response.data); // "포인트가 성공적으로 업데이트되었습니다."
+  } catch (error) {
+    console.error("포인트 업데이트 실패:", error);
+  }
+};
+
+// 페이지 마운트 시 포인트 업데이트 및 차트 데이터 초기화
 onMounted(() => {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -81,6 +100,9 @@ onMounted(() => {
       },
     ],
   };
+
+  // 포인트 업데이트 API 호출
+  updateUserPoints();
 });
 
 // 퀴즈 다시 도전 함수
@@ -89,6 +111,7 @@ const retryQuiz = () => {
   router.push({ name: "quiz" });
 };
 </script>
+
 
 <style scoped>
 .final-result-container {

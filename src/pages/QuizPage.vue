@@ -37,98 +37,110 @@
     </div>
     <button class="next-button" @click="handleNext">{{ buttonText }}</button>
   </div>
+
+   <!-- 팝업 메시지 -->
+   <div v-if="popupVisible" class="popup-overlay">
+      <div class="popup">
+        <p>{{ popupMessage }}</p>
+      </div>
+    </div>
 </template>
 
-<script>
+<script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router"; // Vue Router 가져오기
+import { useRouter } from "vue-router";
 
-export default {
-  setup() {
-    const router = useRouter(); // 라우터 인스턴스 생성
+const router = useRouter();
 
-    const questions = [
-      { text: "Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.", answer: "O" },
-      { text: "Q2. 틀린 그림 찾기 게임은 재미있다.", answer: "X" },
-      { text: "Q3. 금융상품 가입 시 예금자 보호가 가능한 상품은 보통 5천만 원까지 보호된다.", answer: "O" },
-    ];
+const questions = [
+  { text: "Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.", answer: "O" },
+  { text: "Q2. 틀린 그림 찾기 게임은 재미있다.", answer: "X" },
+  { text: "Q3. 금융상품 가입 시 예금자 보호가 가능한 상품은 보통 5천만 원까지 보호된다.", answer: "O" },
+  { text: "Q4. 금융상품 가입 시 예금자 보호가 가능한 상품은 보통 5천만 원까지 보호된다.", answer: "O" }
+];
 
-    const currentQuestionIndex = ref(0);
-    const selectedAnswer = ref(null);
-    const timerWidth = ref(100);
-    const showResult = ref(false);
+const currentQuestionIndex = ref(0);
+const selectedAnswer = ref(null);
+const timerWidth = ref(100);
+const showResult = ref(false);
+const popupVisible = ref(false);
+const popupMessage = ref("");
 
-    const currentQuestion = computed(() => questions[currentQuestionIndex.value]);
+const currentQuestion = computed(() => questions[currentQuestionIndex.value]);
 
-    const buttonText = computed(() => {
-      return showResult.value ? (currentQuestionIndex.value < questions.length - 1 ? "다음 문제" : "결과 보기") : "다음";
-    });
+const buttonText = computed(() => {
+  return showResult.value
+    ? currentQuestionIndex.value < questions.length - 1
+      ? "다음 문제"
+      : "결과 보기"
+    : "다음";
+});
 
-    const selectAnswer = (answer) => {
-      selectedAnswer.value = answer;
-      showResult.value = true;
-    };
+const selectAnswer = (answer) => {
+  selectedAnswer.value = answer;
+  showResult.value = true;
 
-    const isCorrect = (answer) => {
-      return currentQuestion.value.answer === answer;
-    };
+   // 정답 여부 확인 후 팝업 메시지 설정
+   if (isCorrect(answer)) {
+    popupMessage.value = "정답입니다!";
+  } else {
+    popupMessage.value = "오답입니다!";
+  }
+  popupVisible.value = true;
 
-    const handleNext = () => {
-      if (showResult.value) {
-        if (currentQuestionIndex.value < questions.length - 1) {
-          currentQuestionIndex.value += 1;
-          resetState();
-        } else {
-          // 맞춘 문제 수 계산 후 로컬 스토리지에 저장
-          const correctCount = questions.filter((q, index) => {
-            return index <= currentQuestionIndex.value && q.answer === selectedAnswer.value;
-          }).length;
-
-          localStorage.setItem("correctAnswers", correctCount);
-
-          // 결과 페이지로 이동
-          router.push({ name: "finalQuizResult" }); // Vue Router로 이동
-        }
-      } else {
-        alert("답안을 선택해주세요!");
-      }
-    };
-
-    const resetState = () => {
-      selectedAnswer.value = null;
-      showResult.value = false;
-      timerWidth.value = 100;
-    };
-
-    const startTimer = () => {
-      let timerInterval = setInterval(() => {
-        if (timerWidth.value > 0) {
-          timerWidth.value -= 1;
-        } else {
-          clearInterval(timerInterval);
-          showResult.value = true;
-        }
-      }, 100);
-    };
-
-    onMounted(() => {
-      startTimer();
-    });
-
-    return {
-      currentQuestion,
-      buttonText,
-      selectedAnswer,
-      selectAnswer,
-      handleNext,
-      timerWidth,
-      showResult,
-      isCorrect,
-    };
-  },
+  // 3초 뒤에 자동으로 다음 문제로 이동
+  setTimeout(() => {
+    popupVisible.value = false;
+    handleNext();
+  }, 1000);
 };
-</script>
 
+const isCorrect = (answer) => {
+  return currentQuestion.value.answer === answer;
+};
+
+const handleNext = () => {
+  if (showResult.value) {
+    if (currentQuestionIndex.value < questions.length - 1) {
+      currentQuestionIndex.value += 1;
+      resetState();
+    } else {
+      const correctCount = questions.filter((q, index) => {
+        return index <= currentQuestionIndex.value && q.answer === selectedAnswer.value;
+      }).length;
+
+      localStorage.setItem("correctAnswers", correctCount);
+
+      router.push({ name: "finalQuizResult" });
+    }
+  } else {
+    alert("답안을 선택해주세요!");
+  }
+};
+
+const resetState = () => {
+  selectedAnswer.value = null;
+  showResult.value = false;
+  timerWidth.value = 100;
+};
+
+const startTimer = () => {
+  let timerInterval = setInterval(() => {
+    if (timerWidth.value > 0) {
+      timerWidth.value -= 1;
+    } else {
+      clearInterval(timerInterval);
+      showResult.value = true;
+    }
+  }, 100);
+};
+
+
+
+onMounted(() => {
+  startTimer();
+});
+</script>
 
 <style scoped>
 .quiz-container {
@@ -231,5 +243,29 @@ button.selected {
   z-index: 2;
   display: flex;
   justify-content: center;
+}
+
+/* 팝업 스타일 */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.popup {
+  background: white;
+  color: black;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 18px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 </style>

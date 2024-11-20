@@ -49,7 +49,7 @@ watchEffect(() => {
   <header class="header">
     <div class="logo">
       <!-- 로고 영역 -->
-      <img src="@/assets/images/cmlogo2.png" alt="Logo" />
+      <router-link to="/"><img src="@/assets/images/cmlogo2.png" alt="Logo" /></router-link>
     </div>
     <div class="menu-auth-container">
       <nav class="nav">

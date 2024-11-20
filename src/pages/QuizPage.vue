@@ -111,7 +111,7 @@ const handleNext = () => {
 
       localStorage.setItem("correctAnswers", correctCount);
 
-      router.push({ name: "finalQuizResult" });
+      router.push({ name: "findMistake" });
     }
   } else {
     alert("답안을 선택해주세요!");

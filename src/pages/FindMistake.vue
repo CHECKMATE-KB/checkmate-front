@@ -53,6 +53,9 @@ export default {
       const y = event.clientY - rect.top;
 
       mistakes.value.push({ x, y });
+      if (mistakes.value.length === 3) {
+        goToResultPage(); // 3번 클릭하면 바로 결과 페이지로 이동
+      }
     };
 
     const goToResultPage = () => {

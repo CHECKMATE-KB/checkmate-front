@@ -9,7 +9,7 @@
         <!-- 우측 회원가입 폼 영역 -->
         <div id="right-container">
             <!-- 로그인 페이지 타이틀 -->
-            <div id="loginBoxTitle">계정을 만드세요</div>
+            <div id="loginBoxTitle">로그인</div>
             <p style="color:#B1B3B9; padding-bottom:16px;">디지털 자산 거래를 시작합니다.</p>
             <!-- 아이디, 비번, 버튼 박스 -->
             <form @submit.prevent="handleLogin">

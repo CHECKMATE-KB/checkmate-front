@@ -109,10 +109,8 @@ onMounted(() => {
 }
 
 .participant-image {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 3px solid white;
+  width: 180px;
+  height: 180px;
   margin-bottom: 10px;
 }
 

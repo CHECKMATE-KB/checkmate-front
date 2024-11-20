@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="challenge-page">
       <div class="components-container">
         <!-- 첫 번째 컴포넌트 -->
         <ChallengeMain />
@@ -29,15 +29,18 @@
   <style>
   .challenge-page {
     width: 100%;
-    display: flex;
-    justify-content: center; /* 페이지 중앙에 정렬 */
-    padding: 20px 0;
-    background-color: #f8f8f8;
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 20px;
+  background-size: cover; /* 배경 이미지 크기 */
+  background-position: center; /* 배경 이미지 위치 */
+  background-repeat: no-repeat; /* 배경 이미지 반복 금지 */
+  color: #fff; /* 텍스트 색상 */
   }
   
   .components-container {
     width: 100%; /* 전체 가로 크기 */
-    max-width: 1200px; /* 최대 크기 제한 */
+    /* max-width: 1200px; 최대 크기 제한 */
     display: flex;
     flex-direction: column; /* 세로 배치 */
     gap: 20px; /* 컴포넌트 간 간격 */

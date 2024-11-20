@@ -1,7 +1,6 @@
 <template>
   <div class="main-container">
     <header class="header">
-      <img src="@/assets/images/main.png" alt="Main" class="main-image" />
       <div class="overlay"></div>
       <div class="header-content">
         <h1>착한소비, 똑똑한 소비</h1>
@@ -14,7 +13,6 @@
       </div>
     </header>
 
-
     <section class="content" ref="contentSection">
       <div class="left-image">
         <div class="dog-background">
@@ -25,7 +23,7 @@
         <h2>체크메이트에서는 이런 챌린지들을 도전할 수 있어요!</h2>
         <p>
           작은 지출부터 계획적인 소비까지 의미 있는 챌린지를 통해 똑똑한 소비와 경제적 여유를 동시에 누릴 수 있습니다.
-          지금 바로 체크메이트에서 챌린지를 통해 착한 소비 습관 함께 만들어 보실까요?
+          <br>지금 바로 체크메이트에서 챌린지를 통해 착한 소비 습관 함께 만들어 보실까요?
         </p>
       </div>
     </section>
@@ -45,10 +43,10 @@
     <section class="quiz-section">
       <div class="quiz-content">
         <div class="quiz-image">
-          <img src="@/assets/images/quizmockup.png" alt="Quiz 1" />
-          <img src="@/assets/images/quizmockup2.png" alt="Quiz 2" class="secondary-image" />
+          <img src="@/assets/images/quizmockup.png" alt="Quiz 1" class="fade-wrap" />
+          <img src="@/assets/images/quizmockup2.png" alt="Quiz 2" class="fade-wrap secondary-image" />
         </div>
-        <div class="quiz-text">
+        <div class="quiz-text fade-wrap">
           <h3>매일 함께하는 퀴즈로 금융 상식과<br> 포인트를 늘릴 수 있습니다</h3>
           <p>
             단순히 문제를 푸는 것이 아닌, 금융에 대한 이해도를 높이고 실생활에 적용 가능한 유익한 정보를 제공합니다.
@@ -59,35 +57,64 @@
             <li>누적 포인트로 혜택 교환</li>
             <li>재미와 학습을 동시에!</li>
           </ul>
-
         </div>
       </div>
     </section>
     <div class="additional-section">
       <img src="@/assets/images/mainicon.png" alt="Main Icon" class="main-icon" />
       <button class="start-quiz-button">체크메이트 가입하기</button>
-      <p class="join-text">체크메이트에 가입하고 다양한 소비 챌린지를 통해 착한 소비 습관을 만들어 보세요! <br>함께 도전하며 경제적 여유를 찾고, 똑똑한 소비의 즐거움을 느껴보세요!</p> <!-- 추가된 문구 -->
+      <p class="join-text">체크메이트에 가입하고 다양한 소비 챌린지를 통해 착한 소비 습관을 만들어 보세요! <br>함께 도전하며 경제적 여유를 찾고, 똑똑한 소비의 즐거움을 느껴보세요!</p>
     </div>
   </div>
 </template>
 
 <script setup>
-
-import { ref } from 'vue';
+import { ref, onMounted } from "vue";
 
 const contentSection = ref(null);
 
 const scrollToContent = () => {
   if (contentSection.value) {
-    contentSection.value.scrollIntoView({ behavior: 'smooth' });
+    contentSection.value.scrollIntoView({ behavior: "smooth" });
   }
 };
+
+onMounted(() => {
+  const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("fade-in");
+          } else {
+            entry.target.classList.remove("fade-in");
+          }
+        });
+      },
+      { threshold: 0.1 }
+  );
+
+  const fadeElements = document.querySelectorAll(".fade-wrap");
+  fadeElements.forEach((element) => observer.observe(element));
+});
 </script>
 
 <style scoped>
+.quiz-image img,
+.quiz-image .secondary-image,
+.quiz-text {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 2s ease-in-out;
+}
 
+.quiz-image img.fade-in,
+.quiz-image .secondary-image.fade-in,
+.quiz-text.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
 .main-container {
-  width: 120%; /* 기본 100%보다 더 넓게 설정 */
+  width: 150%; /* 기본 100%보다 더 넓게 설정 */
   min-height: 100vh; /* 화면 높이는 그대로 유지 */
   margin: 0 auto; /* 가운데 정렬 */
   overflow: hidden; /* 필요에 따라 스크롤 제거 */
@@ -115,19 +142,15 @@ const scrollToContent = () => {
   text-align: center;
   position: relative;
   width: 100%;
-  height: 140vh;
+  height: 70vh;
   overflow: hidden;
+  background: url(/src/assets/images/main.png) no-repeat center center;
+  background-size: cover;
+  top: 54px;
 }
 
-.main-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  top: -50px; /* 이미지를 50px 올렸습니다 */
-  left: 0;
-  z-index: 1;
-}
+
+
 
 .overlay {
   position: absolute;
@@ -173,7 +196,9 @@ const scrollToContent = () => {
   background: #ffffff;
   width: 100%;
   height: 500px;
-  animation: fade_up 1s; /* 애니메이션 적용 */
+  animation: fade_up-2d1117dc 1s;
+  position: relative;
+  top: 149px;
 }
 @keyframes fade_up {
   0% {
@@ -212,12 +237,14 @@ const scrollToContent = () => {
   position: relative;
   bottom: 80px;
   right: 130px;
+  text-align: center;
 }
 
 .text-content h2 {
   font-size: 38px;
   margin: 0;
   color: #ffffff;
+  margin-bottom: 20px;
 }
 
 .text-content p {
@@ -250,6 +277,8 @@ const scrollToContent = () => {
   justify-content: center;
   gap: 20px;
   overflow-y: hidden;
+  position: relative;
+  top: 110px;
 }
 
 .challenge-card {
@@ -272,6 +301,8 @@ const scrollToContent = () => {
 .arrow-icon {
   width: 40px;
   height: 40px;
+  position: relative;
+  right: 15px;
 }
 
 .highlight {
@@ -309,7 +340,7 @@ const scrollToContent = () => {
 .quiz-image .secondary-image {
   width: 900px; /* 기존보다 크기 증가 */
   position: relative;
-  margin-top: 20px;
+  /*margin-top: 20px;*/
   left: 90px;
   bottom: 150px;
 }
@@ -324,7 +355,6 @@ const scrollToContent = () => {
   left: 140px;
   width: 900px;
 }
-
 .quiz-text ul {
   padding-left: 20px;
 }
@@ -344,13 +374,23 @@ const scrollToContent = () => {
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
+/*
 .additional-section {
   text-align: center;
-  margin: 20px 0; /* 위아래 여백 추가 */
-  background: url("@/assets/images/mainbg.png") no-repeat center center / cover; /* 배경 이미지 설정 */
-  padding: 20px; /* 내부 여백 추가 */
+  margin: 20px 0; 
+  background: url("@/assets/images/mainbg.png") no-repeat center center / cover;
+  padding: 20px; 
   position: relative;
   top: -360px;
+}
+*/
+
+.additional-section {
+  text-align: center;
+  margin: 0; /* 추가 간격 제거 */
+  padding: 20px; /* 내부 여백만 유지 */
+  background: url("@/assets/images/mainbg.png") no-repeat center center / cover;
+  position: relative;
 }
 
 .additional-section::before {

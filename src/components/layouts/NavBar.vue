@@ -29,6 +29,7 @@ const handleLogout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('userNo');
   localStorage.removeItem('nickName');
+  localStorage.removeItem('userImg');
   storenickName.value = ''; 
   alert('로그아웃되었습니다.');
   router.push('/'); // 메인 페이지로 이동
@@ -60,8 +61,6 @@ import { storeUserImg } from '../../stores/userState';
         <router-link to="/" class="nav-item">메인</router-link>
         <router-link to="/challenge" class="nav-item">챌린지</router-link>
         <router-link to="/quiz" class="nav-item">퀴즈</router-link>
-        <router-link to="/assets" class="nav-item">나의자산</router-link>
-        <router-link to="/spending" class="nav-item">소비내역</router-link>
         <router-link to="/mypage" class="nav-item">마이페이지</router-link>
       </nav>
       <div class="auth-buttons">

@@ -6,7 +6,55 @@
     </div>
     <h1 class="question-text">{{ currentQuestion.text }}</h1>
     <div class="options">
-      <div class="option">
+      <template v-if="currentQuestion.type === 'OX'">
+        <div class="option">
+          <button
+            @click="selectAnswer('O')"
+            :class="{
+              'correct': showResult && isCorrect('O'),
+              'incorrect': showResult && !isCorrect('O'),
+              'selected': !showResult && selectedAnswer === 'O'
+            }"
+            :disabled="showResult"
+          >
+            <span class="option-number">1</span>
+            <span class="option-text">O</span>
+          </button>
+        </div>
+        <div class="option">
+          <button
+            @click="selectAnswer('X')"
+            :class="{
+              'correct': showResult && isCorrect('X'),
+              'incorrect': showResult && !isCorrect('X'),
+              'selected': !showResult && selectedAnswer === 'X'
+            }"
+            :disabled="showResult"
+          >
+            <span class="option-number">2</span>
+            <span class="option-text">X</span>
+          </button>
+        </div>
+      </template>
+
+      <!-- 4지선다 문제 -->
+      <template v-else-if="currentQuestion.type === 'MCQ'">
+        <div class="option" v-for="(option, index) in currentQuestion.options" :key="index">
+          <button
+            @click="selectAnswer(option)"
+            :class="{
+              'correct': showResult && isCorrect(option),
+              'incorrect': showResult && !isCorrect(option),
+              'selected': !showResult && selectedAnswer === option
+            }"
+            :disabled="showResult"
+          >
+            <span class="option-number">{{ index + 1 }}</span>
+            <span class="option-text">{{ option }}</span>
+          </button>
+        </div>
+      </template>
+      <!-- <div class="option">
         <button
           @click="selectAnswer('O')"
           :class="{
@@ -19,8 +67,8 @@
           <span class="option-number">1</span>
           <span class="option-text">O</span>
         </button>
-      </div>
-      <div class="option">
+      </div> -->
+      <!-- <div class="option">
         <button
           @click="selectAnswer('X')"
           :class="{
@@ -33,7 +81,7 @@
           <span class="option-number">2</span>
           <span class="option-text">X</span>
         </button>
-      </div>
+      </div> -->
     </div>
     <button class="next-button" @click="handleNext">{{ buttonText }}</button>
   </div>
@@ -52,12 +100,30 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+// const questions = [
+//   { text: "Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.", answer: "O" },
+//   { text: "Q2. 틀린 그림 찾기 게임은 재미있다.", answer: "X" },
+//   { text: "Q3. 금융상품 가입 시 예금자 보호가 가능한 상품은 보통 5천만 원까지 보호된다.", answer: "O" },
+//   { text: "Q4. 금융상품 가입 시 예금자 보호가 가능한 상품은 보통 5천만 원까지 보호된다.", answer: "O" }
+// ];
+// 수정된 질문 데이터
 const questions = [
-  { text: "Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.", answer: "O" },
-  { text: "Q2. 틀린 그림 찾기 게임은 재미있다.", answer: "X" },
-  { text: "Q3. 금융상품 가입 시 예금자 보호가 가능한 상품은 보통 5천만 원까지 보호된다.", answer: "O" },
-  { text: "Q4. 금융상품 가입 시 예금자 보호가 가능한 상품은 보통 5천만 원까지 보호된다.", answer: "O" }
+  { type: "OX", text: "Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.", answer: "O" },
+  { type: "OX", text: "Q2. 금융상품 가입 시 예금자 보호가 가능한 상품은 보통 5천만 원까지 보호된다.", answer: "O" },
+  {
+    type: "MCQ",
+    text: "Q3. 다음 중 1년 뒤 받을 금액이 가장 큰 금융상품은?",
+    options: ["예금 이율 3%", "예금 이율 2.5%", "예금 이율 2%", "예금 이율 1.5%"],
+    answer: "예금 이율 3%",
+  },
+  {
+    type: "MCQ",
+    text: "Q4. 다음 중 주식 투자의 기본 원칙에 해당하지 않는 것은?",
+    options: ["분산 투자", "장기 투자", "시장 예측", "감정적 투자"],
+    answer: "감정적 투자",
+  },
 ];
+
 
 const currentQuestionIndex = ref(0);
 const selectedAnswer = ref(null);
@@ -75,20 +141,22 @@ const buttonText = computed(() => {
       : "결과 보기"
     : "다음";
 });
+const correctAnswers = ref(0); // 맞춘 정답 개수 저장
 
 const selectAnswer = (answer) => {
   selectedAnswer.value = answer;
   showResult.value = true;
 
-   // 정답 여부 확인 후 팝업 메시지 설정
-   if (isCorrect(answer)) {
+  // 정답 여부 확인 후 업데이트
+  if (isCorrect(answer)) {
+    correctAnswers.value += 1; // 맞춘 정답 개수 업데이트
     popupMessage.value = "정답입니다!";
   } else {
     popupMessage.value = "오답입니다!";
   }
   popupVisible.value = true;
 
-  // 3초 뒤에 자동으로 다음 문제로 이동
+  // 1초 뒤에 다음 문제로 이동
   setTimeout(() => {
     popupVisible.value = false;
     handleNext();
@@ -99,19 +167,17 @@ const isCorrect = (answer) => {
   return currentQuestion.value.answer === answer;
 };
 
+
 const handleNext = () => {
   if (showResult.value) {
     if (currentQuestionIndex.value < questions.length - 1) {
+      // 다음 질문으로 이동
       currentQuestionIndex.value += 1;
       resetState();
     } else {
-      const correctCount = questions.filter((q, index) => {
-        return index <= currentQuestionIndex.value && q.answer === selectedAnswer.value;
-      }).length;
-
-      localStorage.setItem("correctAnswers", correctCount);
-
-      router.push({ name: "findMistake" });
+      // 모든 질문이 끝난 경우
+      localStorage.setItem("correctAnswers", correctAnswers.value); // 정답 개수 저장
+      router.push({ name: "findMistake" }); // 다음 페이지로 이동
     }
   } else {
     alert("답안을 선택해주세요!");
@@ -134,7 +200,6 @@ const startTimer = () => {
     }
   }, 100);
 };
-
 
 
 onMounted(() => {

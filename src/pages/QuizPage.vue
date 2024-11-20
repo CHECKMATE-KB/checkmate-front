@@ -41,14 +41,16 @@
 
 <script>
 import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router"; // Vue Router 가져오기
 
 export default {
   setup() {
+    const router = useRouter(); // 라우터 인스턴스 생성
+
     const questions = [
       { text: "Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.", answer: "O" },
       { text: "Q2. 틀린 그림 찾기 게임은 재미있다.", answer: "X" },
       { text: "Q3. 금융상품 가입 시 예금자 보호가 가능한 상품은 보통 5천만 원까지 보호된다.", answer: "O" },
-      
     ];
 
     const currentQuestionIndex = ref(0);
@@ -56,7 +58,6 @@ export default {
     const timerWidth = ref(100);
     const showResult = ref(false);
 
-    
     const currentQuestion = computed(() => questions[currentQuestionIndex.value]);
 
     const buttonText = computed(() => {
@@ -65,7 +66,7 @@ export default {
 
     const selectAnswer = (answer) => {
       selectedAnswer.value = answer;
-      showResult.value = true; 
+      showResult.value = true;
     };
 
     const isCorrect = (answer) => {
@@ -78,8 +79,15 @@ export default {
           currentQuestionIndex.value += 1;
           resetState();
         } else {
-          timerWidth.value=0;
-          alert("퀴즈가 종료되었습니다! 결과 페이지로 이동합니다.");
+          // 맞춘 문제 수 계산 후 로컬 스토리지에 저장
+          const correctCount = questions.filter((q, index) => {
+            return index <= currentQuestionIndex.value && q.answer === selectedAnswer.value;
+          }).length;
+
+          localStorage.setItem("correctAnswers", correctCount);
+
+          // 결과 페이지로 이동
+          router.push({ name: "finalQuizResult" }); // Vue Router로 이동
         }
       } else {
         alert("답안을 선택해주세요!");
@@ -120,6 +128,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .quiz-container {

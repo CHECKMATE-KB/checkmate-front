@@ -1,7 +1,6 @@
 <template>
   <div class="main-container">
     <header class="header">
-      <img src="@/assets/images/main.png" alt="Main" class="main-image" />
       <div class="overlay"></div>
       <div class="header-content">
         <h1>착한소비, 똑똑한 소비</h1>
@@ -143,19 +142,15 @@ onMounted(() => {
   text-align: center;
   position: relative;
   width: 100%;
-  height: 140vh;
+  height: 70vh;
   overflow: hidden;
+  background: url(/src/assets/images/main.png) no-repeat center center;
+  background-size: cover;
+  top: 54px;
 }
 
-.main-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  top: -50px; /* 이미지를 50px 올렸습니다 */
-  left: 0;
-  z-index: 1;
-}
+
+
 
 .overlay {
   position: absolute;
@@ -201,7 +196,9 @@ onMounted(() => {
   background: #ffffff;
   width: 100%;
   height: 500px;
-  animation: fade_up 1s; /* 애니메이션 적용 */
+  animation: fade_up-2d1117dc 1s;
+  position: relative;
+  top: 149px;
 }
 @keyframes fade_up {
   0% {
@@ -280,6 +277,8 @@ onMounted(() => {
   justify-content: center;
   gap: 20px;
   overflow-y: hidden;
+  position: relative;
+  top: 110px;
 }
 
 .challenge-card {
@@ -302,6 +301,8 @@ onMounted(() => {
 .arrow-icon {
   width: 40px;
   height: 40px;
+  position: relative;
+  right: 15px;
 }
 
 .highlight {

@@ -3,12 +3,12 @@
     <header class="header">
       <h3>내 정보</h3>
       <div class="user-info">
-        <span>안녕하세요, 정단호님</span>
+        <span>안녕하세요, {{ profile.nickname }}님</span>
       </div>
     </header>
     <main class="content">
       <div class="profile-section">
-        <img src="https://via.placeholder.com/150" alt="Profile" class="profile-image" />
+        <img :src=profile.userImg alt="Profile" class="profile-image" />
         <div class="contact-info">
           <div class="info-row">
             <p><strong>닉네임:</strong> {{ profile.nickname }}</p>
@@ -31,12 +31,19 @@
 
       <!-- 두 개의 카드 섹션 -->
       <div class="card-row">
-        <div class="card">
+        <div class="card" id="chartCard">
           <Doughnut v-if="chartData" :data="chartData" :options="chartOptions" />
         </div>
-        <div class="card">
-          <h3>Card 2</h3>
-          <p>Some content for Card 2</p>
+        <div class="card" id="tipcard">
+          <div class="tip-card">
+          <h3>💡 체크메이트와 함께하는 챌린지 꿀팁</h3>
+          <div class="tip-content">
+            <p>{{ currentTip }}</p>
+          </div>
+          <div class="tip-actions">
+            <button @click="refreshTip">새로운 팁 보기</button>
+          </div>
+        </div>
         </div>
       </div>
 
@@ -61,14 +68,29 @@
           </div>
         </div> -->
         <div class="patient-list">
-          <div class="patient-card" v-for="(card, index) in Credit" :key="index">
-            <button class="delete-card-btn" @click="removeCard(index)">X</button>
-            <h3>{{ card.cardHolder }}</h3>
-            <p><strong>카드 번호:</strong> {{ card.cardNumber }}</p>
-            <p><strong>유효 기간:</strong> {{ card.expiration }}</p>
+        <div
+          class="credit-card"
+          v-for="(card, index) in Credit"
+          :key="index"
+        >
+          <div class="card-header">
+            <span class="card-title">KB국민카드</span>
           </div>
+          <div class="card-body">
+            <div class="chip"></div>
+            <p class="card-number">{{ card.cardNumber }}</p>
+            <p class="card-expiration">
+              <strong>유효기간:</strong> {{ card.expiration }}
+            </p>
+          </div>
+          <div class="card-hover-info">
+            <p><strong>카드 별명:</strong> {{ card.cardHolder }}</p>
+            <p><strong>소유자:</strong> {{ profile.nickname }}</p>
+            <p><strong>유효기간:</strong> {{ card.expiration }}</p>
+          </div>
+          <button class="delete-card-btn" @click="removeCard(index)">삭제</button>
         </div>
-
+      </div>
       </div>
     </main>
 
@@ -146,6 +168,24 @@ import {
 // Chart.js 플러그인 등록
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
+// 맞춤형 금융 팁 데이터
+const tips = [
+  "이번 달 교통비를 절약하기 위해 대중교통을 적극 활용해보세요.",
+  "주 1회 외식을 줄이면 약 5만 원을 절약할 수 있습니다.",
+  "쇼핑 전에 꼭 장바구니를 작성하고 계획적으로 소비하세요.",
+  "저축 계좌에 자동 이체를 설정하여 꾸준히 저축하세요.",
+  "불필요한 구독 서비스를 점검하고 해지하세요.",
+  "매달 고정 지출을 분석해 불필요한 항목을 줄여보세요.",
+];
+
+const currentTip = ref(tips[0]); // 기본적으로 첫 번째 팁을 표시
+
+// 팁 새로고침 함수
+const refreshTip = () => {
+  const randomIndex = Math.floor(Math.random() * tips.length);
+  currentTip.value = tips[randomIndex];
+};
+
 /* --------------------------
    사용자 정보 관리
 -------------------------- */
@@ -154,6 +194,7 @@ const profile = ref({
   email: "",
   phone: "",
   points: 0,
+  userImg:""
 });
 
 const fetchUserProfile = async () => {
@@ -265,12 +306,12 @@ const setupChartData = (categoryData) => {
         position: "top",
         labels: {
           font: { size: 14 },
-          color: "#333",
+          color: "#fff",
         },
       },
       title: {
         display: true,
-        text: "카테고리별 소비 내역",
+        text: " ",
         color: "#333",
         font: { size: 20 },
       },
@@ -380,7 +421,7 @@ onMounted(async () => {
 .mypage-container {
   font-family: Arial, sans-serif;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: #fff;
   min-height: 100vh;
   color: #333;
 }
@@ -452,7 +493,7 @@ onMounted(async () => {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  /* height: 260px; 삭제 */
+  height:550px;
   overflow: hidden; /* 추가: 콘텐츠가 잘리지 않도록 */
 }
 
@@ -475,41 +516,115 @@ onMounted(async () => {
 }
 .patient-list {
   display: flex;
-  justify-content: center; /* 가운데 정렬 */
-  gap: 20px;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* 카드가 화면 크기에 따라 줄바꿈 되도록 */
+  gap: 20px; /* 카드 간 간격 */
+  justify-content: center;
 }
-.patient-card {
+
+.credit-card {
   position: relative;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 15px;
-  background: #f7f8fa;
+  background-color: #a5a58d; /* 카드 배경 색상 */
   width: 320px;
-  height: 150px;
-  box-sizing: border-box;
-  text-align: center;
+  height: 200px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden; /* 내용이 카드 영역을 벗어나지 않도록 설정 */
+  transition: transform 0.3s ease;
 }
-.patient-card h3 {
+
+.credit-card:hover {
+  transform: scale(1.05); /* 카드 확대 효과 */
+}
+
+.card-hover-info {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* 반투명 검정 배경 */
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease; /* 부드러운 등장/사라짐 효과 */
+  z-index: 10; /* 다른 요소 위에 표시되도록 설정 */
+}
+
+.credit-card:hover .card-hover-info {
+  opacity: 1; /* hover 시 보이도록 설정 */
+}
+
+.card-hover-info p {
+  margin: 5px 0;
+}
+
+.card-header {
   font-size: 18px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.card-title {
+  display: block;
   margin-bottom: 10px;
 }
+
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  text-align: center;
+}
+
+.chip {
+  width: 50px;
+  height: 35px;
+  background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.card-number {
+  font-size: 20px;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.card-expiration {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
 .delete-card-btn {
   position: absolute;
-  top: 10px;
+  bottom: 10px;
   right: 10px;
   background: #ff4d4d;
-  color: #fff;
+  color: white;
   border: none;
-  border-radius: 50%;
-  width: 25px;
-  height: 25px;
-  font-size: 14px;
+  border-radius: 5px;
+  padding: 5px 10px;
   cursor: pointer;
+  z-index: 20; /* 버튼이 항상 hover-info 위에 있도록 설정 */
 }
+
 .delete-card-btn:hover {
   background: #ff1a1a;
 }
+
+
 .info-text {
   margin-top: 10px;
   font-size: 14px;
@@ -711,4 +826,73 @@ onMounted(async () => {
   margin-top: 10px;
 }
 
+#tipcard {
+  background: url('@/assets/images/tipback3.png') no-repeat center center;
+  background-size: cover;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+#chartCard {
+  background: url('@/assets/images/tipback2.png') no-repeat center center;
+  background-size: cover;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+
+/* 카드 제목 */
+.tip-card h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #4caf50;
+}
+
+/* 내용 */
+.tip-content p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* 버튼 스타일 */
+.tip-actions button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.tip-actions button:hover {
+  background-color: #45a049;
+}
+
+/* 카드 스타일 */
+.tip-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: #333;
+  width:500px;
+}
 </style>

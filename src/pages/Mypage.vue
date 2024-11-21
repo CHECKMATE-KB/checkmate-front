@@ -9,6 +9,7 @@
     <main class="content">
       <div class="profile-section">
         <img :src="profile.userImg" alt="Profile" class="profile-image" />
+        <!-- <img src="../assets/images/character5_temp.jpg" alt="Profile" class="profile-image" /> -->
         <div class="contact-info">
           <div class="info-row">
             <p><strong>닉네임:</strong> {{ profile.nickname }}</p>
@@ -624,7 +625,9 @@ const openModal = (data) => {
   height: 120px;
   border-radius: 50%;
   border: 3px solid #f7f8fa;
-  object-fit: cover;
+  object-fit: cover; /* 이미지 비율 유지하며 영역 채우기 */
+  transform: scale(1.0); /* 이미지를 20% 확대 */
+  transition: transform 0.3s ease-in-out; /* 효과 부드럽게 */
 }
 .contact-info {
   flex: 1;

@@ -67,7 +67,7 @@ import { storeUserImg } from '../../stores/userState';
         <!-- 로그인 상태에 따른 버튼 표시 -->
         <template v-if="storenickName">
           <span class="welcome-message"> 
-            <img :src="storeUserImg" width="30px">
+            <!-- <img :src="storeUserImg" width="30px"> -->
             {{ storenickName }}님 환영합니다.</span>
           <button class="logout-button" @click="handleLogout">로그아웃</button>
         </template>
@@ -115,6 +115,7 @@ import { storeUserImg } from '../../stores/userState';
   text-decoration: none;
   color: #333;
   font-size: 16px;
+  z-index: 1;
 }
 
 .nav-item:hover {

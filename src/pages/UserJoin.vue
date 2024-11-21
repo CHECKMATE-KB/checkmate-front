@@ -2,7 +2,7 @@
     <!--  html 전체 영역 container -->
     <div id="page-container">
         <div class="left-container"> <!-- 좌측 이미지 영역 -->
-            <img src="../assets/images/logo.png" width="550px" height="700px">
+            <img src="../assets/images/logo.png" width="900px" height="700px" style="position: relative; left: -80px;">
         </div>
 
         <!-- 우측 회원가입 폼 영역 -->
@@ -62,7 +62,7 @@
             </form>
 
             <p class="login-link">
-                이미 계정이 있으신가요? <a href="/login" style="color:#FFB229;">로그인하기</a>
+                이미 계정이 있으신가요? <a href="/login" style="color:#7b9fff;">로그인하기</a>
               </p>
         </div>
     </div>
@@ -125,7 +125,7 @@ input {
 .signup-button {
     width: 100%;
     padding: 10px;
-    background-color: #ffa500;
+    background-color: #7b9fff;
     border: none;
     border-radius: 5px;
     color: white;
@@ -134,7 +134,7 @@ input {
 }
   
 .signup-button:hover {
-    background-color: #e69500;
+    background-color: #2964ff;
 }
   
 .login-link {
@@ -144,7 +144,7 @@ input {
 }
 
 .duplicate-check-btn {
-    background-color: blue; 
+    background-color: #7b9fff;
     color: white; 
     height: 40px; 
     padding: 0 15px; 

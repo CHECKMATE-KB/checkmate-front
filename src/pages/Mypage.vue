@@ -763,7 +763,8 @@ const openModal = async (data) => {
 
 /* 메세지 섹션 */
 .messages-section {
-  background: #ffffff;
+  background: url('@/assets/images/tipback2.png') no-repeat center center;
+  background-size: cover;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -772,7 +773,8 @@ const openModal = async (data) => {
 
 /* 카드 섹션 */
 .patients-section {
-  background: #ffffff;
+  background: url('@/assets/images/tipback2.png') no-repeat center center;
+  background-size: cover;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

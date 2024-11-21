@@ -4,7 +4,7 @@
     <div class="image-selector">
       <figure class="text-center">
         <blockquote class="blockquote">
-          <p>팀원을 구성하고, 금융 챌린지에 도전해보세요!</p>
+          <p class="text-muted">팀원을 구성하고, 금융 챌린지에 도전해보세요!</p>
         </blockquote>
         <figcaption class="blockquote-footer">
           다양한 미션을 클리어하고 <cite title="Source Title">리워드를 얻어보세요!</cite>

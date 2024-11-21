@@ -64,7 +64,7 @@
 
       <div class="messages-section">
         <div class="calendar-section">
-        <h3>지출 내역</h3>
+        <h3 style="color:white">지출 내역</h3>
         <div ref="calendar" id="full-calendar" class="small-calendar"></div>
       </div>
       <!-- <div v-if="isModalVisible" class="modal-overlay">
@@ -144,7 +144,7 @@
 
       <div class="patients-section">
         <div class="section-header">
-          <h2>등록된 카드목록</h2>
+          <h2 style="color:white">등록된 카드목록</h2>
           <button class="add-card-btn" @click="openCardModal">카드 등록</button>
         </div>
         <!-- <div class="patient-list">

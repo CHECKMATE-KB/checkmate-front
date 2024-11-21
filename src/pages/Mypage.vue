@@ -67,7 +67,7 @@
         <h3>지출 내역</h3>
         <div ref="calendar" id="full-calendar" class="small-calendar"></div>
       </div>
-      <div v-if="isModalVisible" class="modal-overlay">
+      <!-- <div v-if="isModalVisible" class="modal-overlay">
         <div class="modal trendy-modal">
           <div class="modal-header">
             <h3>
@@ -93,8 +93,51 @@
             </li>
           </ul>
         </div>
+      </div> -->
+      <div v-if="isModalVisible" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="tabs">
+        <span class="active"> 지출 상세 정보</span>
       </div>
-      
+      <button class="close-button" @click=closeModal>X</button>
+    </div>
+    <div class="modal-body">
+      <div class="list-item">
+        <div class="info">
+          <div class="text">
+          {{ modalData.cardNumber || 'N/A' }}
+          </div>
+        </div>
+        <button class="button">카드번호</button>
+      </div>
+      <div class="list-item">
+        <div class="info">
+          <div class="text">
+            {{ modalData.historyCategory || 'N/A' }}
+          </div>
+        </div>
+        <button class="button">카테고리</button>
+      </div>
+      <div class="list-item">
+        <div class="info">
+          <div class="text">
+            ₩{{ modalData.price || 'N/A' }}
+          </div>
+        </div>
+        <button class="button">금액</button>
+      </div>
+      <div class="list-item">
+        <div class="info">
+          <div class="text">
+            {{ modalData.historyDate ? formatDate(modalData.historyDate) : 'N/A' }}
+          </div>
+        </div>
+        <button class="button">소비일</button>
+      </div>
+    </div>
+  </div>
+</div>
       </div>
       
     
@@ -1169,7 +1212,7 @@ const openModal = async (data) => {
 .modal {
   position: relative; /* 부모 안에서 정렬 */
   background: white;
-  padding: 20px;
+  padding: 20px 20px 0px 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   width: 400px;
@@ -1177,8 +1220,105 @@ const openModal = async (data) => {
   animation: fadeIn 0.3s ease-in-out; /* 부드러운 등장 효과 */
   display: block !important; /* 강제 표시 */
   visibility: visible !important; /* 가시성 강제 */
-  height: 285px;
+  height: 450px;
 }
+.modal-header .tabs {
+    display: flex;
+    flex: 1;
+  }
+
+  .tabs span {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: #888;
+    position: relative;
+  }
+
+  .tabs span.active {
+    color: #5c6bc0;
+    font-weight: bold;
+  }
+
+  .tabs span.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #5c6bc0;
+  }
+
+  .close-button {
+    font-size: 1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #888;
+  }
+
+  /* 리스트 스타일 */
+  .modal-body {
+    padding: 16px;
+  }
+
+  .list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #eaeaea;
+  }
+
+  .list-item:last-child {
+    border-bottom: none;
+  }
+
+  .list-item .info {
+    display: flex;
+    align-items: center;
+  }
+
+  .list-item .info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ddd;
+    margin-right: 12px;
+  }
+
+  .list-item .info .text {
+    font-size: 0.9rem;
+  }
+
+  .list-item .info .text .name {
+    font-weight: bold;
+    color: #333;
+  }
+
+  .list-item .info .text .description {
+    font-size: 0.8rem;
+    color: #888;
+  }
+
+  .list-item .button {
+    background: #5c6bc0;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+    width:100px;
+  }
+
+  .list-item .button:hover {
+    background: #3f51b5;
+  }
 
 @keyframes fadeIn {
   from {

@@ -355,17 +355,18 @@ import { storeUserImg } from '../stores/userState';
 
 // 프로필 이미지 후보 경로 배열
 const profileImages = [
-    '../../src/assets/images/profiles/profile1.jpg',
-    '../../src/assets/images/profiles/profile2.jpg',
-    '../../src/assets/images/profiles/profile3.jpg',
-    '../../src/assets/images/profiles/profile4.jpg',
-    '../../src/assets/images/profiles/profile5.jpg',
+    new URL('@/assets/images/profiles/profile1.png', import.meta.url).href,
+    new URL('@/assets/images/profiles/profile2.png', import.meta.url).href,
+    new URL('@/assets/images/profiles/profile3.png', import.meta.url).href,
+    new URL('@/assets/images/profiles/profile4.png', import.meta.url).href,
+    new URL('@/assets/images/profiles/profile5.png', import.meta.url).href,
 ];
 
 // 프로필 이미지 선택 함수
 const selectProfileImage = (imagePath) => {
     user.userImg = imagePath; // 선택한 이미지 경로 저장
-    storeUserImg.value = '../' + imagePath; // 전역 상태 업데이트
+    console.log(storeUserImg);
+    storeUserImg.value = imagePath; // 전역 상태 업데이트
 };
 
 </script>

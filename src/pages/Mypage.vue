@@ -212,6 +212,8 @@ import {
   CategoryScale,
 } from "chart.js";
 
+const defaultProfileImage = new URL('@/assets/images/profile5.png', import.meta.url).href;
+
 // Chart.js 플러그인 등록
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
@@ -241,7 +243,7 @@ const profile = ref({
   email: "",
   phone: "",
   points: 0,
-  userImg:""
+  userImg:defaultProfileImage,
 });
 
 const fetchUserProfile = async () => {
@@ -254,14 +256,19 @@ const fetchUserProfile = async () => {
   try {
     const response = await axios.get(`/api/user/info/${userNo}`);
     const userData = response.data;
-
+    
+    console.log(userData.userImg);
     profile.value = {
       nickname: userData.nickname || "닉네임 없음",
       email: userData.email || "이메일 없음",
       phone: userData.phone || "연락처 없음",
       points: userData.point || 0,
-      userImg: userData.userImg || "default.png",
+      userImg: userData.userImg
+        // ? new URL(`${userData.userImg}`, import.meta.url).href
+        // : defaultProfileImage, // userImg 없으면 기본 이미지 사용
     };
+
+    console.log(profile.value.userImg);
   } catch (error) {
     console.error("Failed to fetch user profile:", error);
   }
@@ -450,7 +457,12 @@ const fetchBuyHistory = async () => {
 
   try {
     const response = await axios.get(`/api/buy/${userNo}`);
-    const buyHistory = response.data;
+    const buyHistory = Array.isArray(response.data) ? response.data : Object.values(response.data);
+
+    if (!Array.isArray(buyHistory)) {
+      console.error("API 응답 데이터가 배열이 아닙니다:", buyHistory);
+      return;
+    }
 
     // 카테고리별 소비 금액 집계
     const categoryData = {};
@@ -584,6 +596,10 @@ const closeCardModal = () => {
 /* --------------------------
    컴포넌트 초기화
 -------------------------- */
+
+// 컴포넌트가 마운트될 때 사용자 프로필 데이터를 가져옵니다.
+onMounted(fetchUserProfile);
+
 onMounted(async () => {
 
 const userId = localStorage.getItem("userId");

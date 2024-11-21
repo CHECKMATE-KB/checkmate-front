@@ -68,17 +68,33 @@
         <div ref="calendar" id="full-calendar" class="small-calendar"></div>
       </div>
       <div v-if="isModalVisible" class="modal-overlay">
-        <div class="modal">
-          <h3>지출 상세 정보</h3>
-          <ul>
-            <li><strong>금액:</strong> ₩{{ modalData.price || 'N/A' }}</li>
-            <li><strong>카테고리:</strong> {{ modalData.historyCategory || 'N/A' }}</li>
-            <li><strong>카드 번호:</strong> {{ modalData.cardNo || 'N/A' }}</li>
-            <li><strong>날짜:</strong> {{ modalData.historyDate ? formatDate(modalData.historyDate) : 'N/A' }}</li>
+        <div class="modal trendy-modal">
+          <div class="modal-header">
+            <h3>
+              <i class="fa fa-info-circle"></i> 지출 상세 정보
+            </h3>
+            <button class="close-button" @click="closeModal">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <ul class="modal-content">
+            <li>
+              <strong>💵 금액:</strong> ₩{{ modalData.price || 'N/A' }}
+            </li>
+            <li>
+              <strong>📂 카테고리:</strong> {{ modalData.historyCategory || 'N/A' }}
+            </li>
+            <li>
+              <strong>💳 카드 번호:</strong> {{ modalData.cardNumber || 'N/A' }}
+            </li>
+            <li>
+              <strong>📅 날짜:</strong>
+              {{ modalData.historyDate ? formatDate(modalData.historyDate) : 'N/A' }}
+            </li>
           </ul>
-          <button class="close-button" @click="closeModal">닫기</button>
         </div>
       </div>
+      
       </div>
       
     
@@ -572,16 +588,47 @@ onMounted(async () => {
   initializeCalendar(); // 캘린더 초기화
   await fetchCards(); 
 });
-
-const openModal = (data) => {
+const categoryMap = {
+  1: "식비",
+  2: "유흥",
+  3: "엔터테인먼트",
+  4: "쇼핑",
+  5: "기타",
+};
+// const openModal = (data) => {
+//   modalData.value = {
+//     price: data.price || 0,
+//     historyCategory: categoryMap[data.historyCategory] || "미분류", // 매핑된 텍스트 사용
+//     cardNo: data.cardNo || "N/A",
+//     historyDate: data.historyDate || new Date(),
+//   };
+//   isModalVisible.value = true; // 모달 열기
+// };
+const openModal = async (data) => {
+  // 기본 모달 데이터를 설정
   modalData.value = {
     price: data.price || 0,
-    historyCategory: data.historyCategory || "미분류",
+    historyCategory: categoryMap[data.historyCategory] || "미분류",
     cardNo: data.cardNo || "N/A",
     historyDate: data.historyDate || new Date(),
+    cardNumber: "로딩 중...", // 로딩 표시
   };
-  isModalVisible.value = true; // 모달 열기
+
+  // 모달 열기
+  isModalVisible.value = true;
+
+  // 카드 번호를 가져오기 위한 API 호출
+  if (data.cardNo) {
+    try {
+      const response = await axios.get(`/api/card/cardNumber/${data.cardNo}`);
+      modalData.value.cardNumber = response.data.cardNumber || "N/A";
+    } catch (error) {
+      console.error("Failed to fetch card number:", error);
+      modalData.value.cardNumber = "N/A";
+    }
+  }
 };
+
 
 </script>
 
@@ -1125,11 +1172,12 @@ const openModal = (data) => {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  width: 300px;
+  width: 400px;
   text-align: left;
   animation: fadeIn 0.3s ease-in-out; /* 부드러운 등장 효과 */
   display: block !important; /* 강제 표시 */
   visibility: visible !important; /* 가시성 강제 */
+  height: 285px;
 }
 
 @keyframes fadeIn {

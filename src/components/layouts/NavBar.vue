@@ -60,7 +60,7 @@ import { storeUserImg } from '../../stores/userState';
         <!-- 메뉴 항목 -->
         <router-link to="/" class="nav-item">메인</router-link>
         <router-link to="/challenge" class="nav-item">챌린지</router-link>
-        <router-link to="/quiz" class="nav-item">퀴즈</router-link>
+        <router-link to="/quizstart" class="nav-item">퀴즈</router-link>
         <router-link to="/mypage" class="nav-item">마이페이지</router-link>
       </nav>
       <div class="auth-buttons">

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import HomePage from '../pages/HomePage.vue';
 import QuizPage from '../pages/QuizPage.vue';
+import QuizStart from '../pages/QuizStart.vue';
 import UserJoin from '../pages/UserJoin.vue';
 import Login from '../pages/Login.vue';
 import FindMistake from '../pages/FindMistake.vue';
@@ -17,6 +18,7 @@ import FinalQuizResult from '../pages/FinalResult.vue';
 const routes = [
   { path: '/', name: 'HomePage', component: HomePage },
   { path: '/quiz', name: 'quiz', component: QuizPage },
+  { path: '/quizStart', name: 'quizStart', component: QuizStart },
   { path: '/findMistake', name: 'findMistake', component: FindMistake },
   { path: '/findMistakeResult', name: 'findMistakeResult', component: FindMistakeResult },
   { path: '/challenge', name: 'Challenge', component: Challenge },

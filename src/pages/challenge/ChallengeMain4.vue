@@ -12,7 +12,7 @@
         @click="selectCategory(category.name)"
       >
         <img :src="category.icon" :alt="category.name" />
-        <p>{{ category.name }}</p>
+        <p style="color:black;">{{ category.name }}</p>
       </div>
     </div>
 
@@ -62,47 +62,12 @@ const categories = {
   4: "유흥",
   5: "미용",
 };
-// const userData = {
-//   전체: [
-//     { name: "정단호", total: 5000 },
-//     { name: "홍세영", total: 6500 },
-//     { name: "황현석", total: 4700 },
-//     { name: "정예슬", total: 7000 },
-//     { name: "이조은", total: 4800 },
-//   ],
-//   음료: [
-//     { name: "정단호", amount: 1000 },
-//     { name: "홍세영", amount: 2000 },
-//     { name: "황현석", amount: 1500 },
-//     { name: "정예슬", amount: 800 },
-//     { name: "이조은", amount: 600 },
-//   ],
-//   교통: [
-//     { name: "정단호", amount: 2000 },
-//     { name: "홍세영", amount: 1000 },
-//     { name: "황현석", amount: 1200 },
-//     { name: "정예슬", amount: 1800 },
-//     { name: "이조은", amount: 1400 },
-//   ],
-//   식비: [
-//     { name: "정단호", amount: 1500 },
-//     { name: "홍세영", amount: 2500 },
-//     { name: "황현석", amount: 1300 },
-//     { name: "정예슬", amount: 2000 },
-//     { name: "이조은", amount: 1800 },
-//   ],
-//   유흥: [
-//     { name: "정단호", amount: 500 },
-//     { name: "홍세영", amount: 1000 },
-//     { name: "황현석", amount: 700 },
-//     { name: "정예슬", amount: 1400 },
-//     { name: "이조은", amount: 1000 },
-//   ],
-// };
+
 // 사용자별 데이터를 누적
 const selectedCategory = ref("전체");
 const chartData = ref(null);
-const teamNo= ref(3);
+const teamNo=ref(0);
+const props= defineProps(['teamNo']);
 const chartOptions = ref({
   responsive: true,
   plugins: {
@@ -131,6 +96,7 @@ const chartOptions = ref({
     },
   },
 });
+
 
 
 // 데이터 변환 함수
@@ -174,6 +140,7 @@ const transformData = (data) => {
 
 const fetchTeamSpendData = async () => {
   try {
+    teamNo.value=props.teamNo;
     const response = await axios.get(`http://localhost:8080/api/team/spend/category/${teamNo.value}`);
     raw.value = response.data; // API 응답 데이터를 teamSpendData에 저장
     userData.value=transformData(raw.value);

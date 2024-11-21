@@ -38,11 +38,13 @@ const currentIndex = ref(0);
 
 const router = useRouter();
 // 여기 수정해주기
-const teamNo = ref(3);
+const teamNo=ref(0);
+const props= defineProps(['teamNo']);
 const challenges=ref([]);
 const visibleSlides = 3;
 const fetchTeamChallenges = async () => {
   try {
+    teamNo.value=props.teamNo;
     const response = await axios.get(`http://localhost:8080/api/team/challenge/${teamNo.value}`);
     challenges.value = response.data; // 서버에서 받은 데이터를 challenges에 저장
     for(let i=0;i<challenges.value.length;i++) {

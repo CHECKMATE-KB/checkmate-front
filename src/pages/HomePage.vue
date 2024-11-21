@@ -92,8 +92,8 @@
 
 
     <div class="additional-section">
-      <img src="@/assets/images/profiles/profile3.png" alt="Main Icon" class="main-icon" />
-      <button class="start-quiz-button">체크메이트 가입하기</button>
+      <img src="@/assets/images/profiles/profile3_temp.png" alt="Main Icon" class="main-icon" />
+      <button class="start-quiz-button" @click="goTouserJoin">체크메이트 가입하기</button>
       <p class="join-text">체크메이트에 가입하고 다양한 소비 챌린지를 통해 착한 소비 습관을 만들어 보세요! <br>함께 도전하며 경제적 여유를 찾고, 똑똑한 소비의 즐거움을 느껴보세요!</p>
     </div>
   </div>
@@ -101,6 +101,7 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
+import router from "@/router";
 
 // 다음 섹션을 참조하기 위한 ref 설정
 const contentSection = ref(null);
@@ -133,6 +134,10 @@ onMounted(() => {
   const fadeElements = document.querySelectorAll(".fade-wrap");
   fadeElements.forEach((element) => observer.observe(element));
 });
+
+const goTouserJoin = () => {
+  router.push('/userJoin');
+}
 </script>
 
 

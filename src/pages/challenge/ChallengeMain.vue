@@ -8,7 +8,7 @@
         :style="{ backgroundImage: `url(${backgroundImage})` }">
         <div class="overlay">
           <img v-if="participant.userImg" :src="participant.userImg" alt="Participant" class="participant-image" />
-          <!-- <img :src="require('participant.userImg')" alt="Participant" class="participant-image" /> -->
+          
           <h3 class="participant-name">{{ participant.userName }}</h3>
         </div>
       </div>
@@ -20,21 +20,23 @@
 // 로컬 이미지 파일 경로를 import
 import backgroundImage from "@/assets/images/background.png";
 import outerBackground from "@/assets/images/challenge-back5.png";
-import { ref, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
 
 
 const participants = ref([]);
-const teamNo = ref(3);
+const teamNo=ref(0);
+const props= defineProps(['teamNo']);
+
 
 const fetchTeamMembers = async () => {
   try {
+    teamNo.value=props.teamNo;
     const response = await axios.get(`http://localhost:8080/api/team/member/${teamNo.value}`);
     participants.value = response.data; // API에서 받아온 데이터를 저장
 
     for(let i=0;i<participants.value.length;i++) {
       participants.value[i].userImg=new URL(participants.value[i].userImg, import.meta.url).href;
-
     }
     console.log("Fetched team members:", participants.value);
   } catch (error) {
@@ -43,6 +45,7 @@ const fetchTeamMembers = async () => {
 };
 
 onMounted(() => {
+  
   fetchTeamMembers();
 });
 </script>

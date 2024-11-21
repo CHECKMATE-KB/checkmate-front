@@ -66,7 +66,21 @@
         <h3>지출 내역</h3>
         <div ref="calendar" id="full-calendar" class="small-calendar"></div>
       </div>
+      <div v-if="isModalVisible" class="modal-overlay">
+        <div class="modal">
+          <h3>지출 상세 정보</h3>
+          <ul>
+            <li><strong>금액:</strong> ₩{{ modalData.price }}</li>
+            <li><strong>카테고리:</strong> {{ modalData.historyCategory }}</li>
+            <li><strong>카드 번호:</strong> {{ modalData.cardNo }}</li>
+            <li><strong>날짜:</strong> {{ formatDate(modalData.historyDate) }}</li>
+          </ul>
+          <button class="close-button" @click="closeModal">닫기</button>
+        </div>
       </div>
+      </div>
+      
+    
 
       <div class="patients-section">
         <div class="section-header">
@@ -107,6 +121,8 @@
       </div>
       </div>
     </main>
+    
+    
 
     <!-- <div class="popup-overlay" v-if="isConvertPopupVisible">
         <div class="popup">
@@ -254,7 +270,39 @@ const closePopup = () => {
 -------------------------- */
 const calendar = ref(null);
 const events = ref([]); // 초기값은 빈 배열
+const isModalVisible = ref(false);
+const modalData = ref({});
+// 날짜 포맷 함수
+const formatDate = (timestamp) => {
+  const date = new Date(timestamp);
+  return date.toISOString().split("T")[0];
+};
 
+// 캘린더 초기화
+// const initializeCalendar = () => {
+//   if (calendar.value) {
+//     const calendarEl = calendar.value;
+
+//     const fullCalendar = new Calendar(calendarEl, {
+//       plugins: [dayGridPlugin],
+//       initialView: "dayGridMonth",
+//       height: "auto",
+//       contentHeight: "auto",
+//       headerToolbar: {
+//         left: "prev,next today",
+//         center: "title",
+//         right: "",
+//       },
+//       events: events.value,
+//       eventClick: (info) => {
+//         modalData.value = info.event.extendedProps; // 상세 정보 가져오기
+//         isModalVisible.value = true; // 모달 열기
+//       },
+//     });
+
+//     fullCalendar.render();
+//   }
+// };
 
 const initializeCalendar = () => {
   if (calendar.value) {
@@ -263,26 +311,34 @@ const initializeCalendar = () => {
     const fullCalendar = new Calendar(calendarEl, {
       plugins: [dayGridPlugin],
       initialView: "dayGridMonth",
-      height: "400px",
+      height: "auto",
       contentHeight: "auto",
       headerToolbar: {
         left: "prev,next today",
         center: "title",
         right: "",
       },
-      events: events.value, // 동적으로 업데이트된 이벤트 사용
+      events: events.value,
       eventClick: (info) => {
-        alert(`이벤트 제목: ${info.event.title}`);
+        console.log("Clicked event data:", info.event.extendedProps);
+        modalData.value = {
+          price: info.event.extendedProps.price,
+          historyCategory: info.event.extendedProps.historyCategory,
+          cardNo: info.event.extendedProps.cardNo,
+          historyDate: info.event.extendedProps.historyDate,
+        };
+        isModalVisible.value = true;
       },
     });
 
     fullCalendar.render();
-
-    // 캘린더 파괴
-    onBeforeUnmount(() => {
-      fullCalendar.destroy();
-    });
   }
+};
+
+
+// 모달 닫기 함수
+const closeModal = () => {
+  isModalVisible.value = false;
 };
 
 
@@ -336,6 +392,43 @@ const setupChartData = (categoryData) => {
 /* --------------------------
    결제 내역 가져오기
 -------------------------- */
+// const fetchBuyHistory = async () => {
+//   const userNo = localStorage.getItem("userNo");
+//   if (!userNo) {
+//     console.error("User number not found in localStorage.");
+//     return;
+//   }
+
+//   try {
+//     const response = await axios.get(`/api/buy/${userNo}`);
+//     const buyHistory = response.data;
+
+//     // 카테고리별 소비 금액 집계
+//     const categoryData = {};
+//     buyHistory.forEach((history) => {
+//       const category = parseInt(history.historyCategory, 10);
+//       const price = parseInt(history.price, 10);
+//       if (!categoryData[category]) {
+//         categoryData[category] = 0;
+//       }
+//       categoryData[category] += price;
+//     });
+
+//     setupChartData(categoryData);
+
+//     // 소비 내역을 캘린더 이벤트로 변환
+//     const calendarEvents = buyHistory.map((history) => ({
+//       title: `₩${history.price} - 카테고리 ${history.historyCategory}`,
+//       start: new Date(history.historyDate).toISOString().split("T")[0], // 날짜만 사용
+//     }));
+
+//     events.value = calendarEvents; // 이벤트 데이터 업데이트
+//     console.log(events.value); // fetchBuyHistory 호출 후 출력
+
+//   } catch (error) {
+//     console.error("Failed to fetch buy history:", error);
+//   }
+// };
 const fetchBuyHistory = async () => {
   const userNo = localStorage.getItem("userNo");
   if (!userNo) {
@@ -350,29 +443,40 @@ const fetchBuyHistory = async () => {
     // 카테고리별 소비 금액 집계
     const categoryData = {};
     buyHistory.forEach((history) => {
-      const category = parseInt(history.historyCategory, 10);
-      const price = parseInt(history.price, 10);
+      const category = parseInt(history.historyCategory, 10); // 카테고리 번호
+      const price = parseInt(history.price, 10); // 금액
       if (!categoryData[category]) {
         categoryData[category] = 0;
       }
-      categoryData[category] += price;
+      categoryData[category] += price; // 카테고리별 금액 합산
     });
 
+    // 차트 데이터 초기화
     setupChartData(categoryData);
 
     // 소비 내역을 캘린더 이벤트로 변환
-    const calendarEvents = buyHistory.map((history) => ({
-      title: `₩${history.price} - 카테고리 ${history.historyCategory}`,
-      start: new Date(history.historyDate).toISOString().split("T")[0], // 날짜만 사용
-    }));
+    const calendarEvents = buyHistory.map((history) => {
+      // historyDate가 밀리초 단위인지 확인
+      const date = new Date(history.historyDate);
+      if (isNaN(date.getTime())) {
+        // 밀리초 단위가 아닌 경우, 초 단위로 간주하여 변환
+        history.historyDate = history.historyDate * 1000;
+      }
+      return {
+        title: `₩${history.price}`, // 금액만 표시
+        start: new Date(history.historyDate).toISOString().split("T")[0], // 날짜만 사용
+        extendedProps: history, // 상세 정보 포함
+      };
+    });
 
     events.value = calendarEvents; // 이벤트 데이터 업데이트
-    console.log(events.value); // fetchBuyHistory 호출 후 출력
-
+    initializeCalendar(); // 캘린더 초기화
   } catch (error) {
     console.error("Failed to fetch buy history:", error);
   }
 };
+
+
 
 /* --------------------------
    포인트 전환하기
@@ -991,5 +1095,42 @@ onMounted(async () => {
     transform: translate(-50%, -60%);
   }
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1030%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  width: 300px;
+  text-align: left;
+}
+
+.close-button {
+  background-color: #f44336;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.close-button:hover {
+  background-color: #d32f2f;
+}
+
 
 </style>

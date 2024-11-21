@@ -328,6 +328,7 @@ onMounted(() => {
   position: relative;
   margin-top: 0; /* 이미지 위치 조정 */
   left: 100px;
+  top:117px;
 }
 
 .quiz-image .primary-image {
@@ -351,7 +352,7 @@ onMounted(() => {
   color: #333;
   max-width: 500px;
   position: relative;
-  top: -80px;
+  top: 67px;
   left: 140px;
   width: 900px;
 }

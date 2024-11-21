@@ -83,7 +83,7 @@
         </button>
       </div> -->
     </div>
-    <button class="next-button" @click="handleNext">{{ buttonText }}</button>
+    <!-- <button class="next-button" @click="handleNext">{{ buttonText }}</button> -->
   </div>
 
    <!-- 팝업 메시지 -->
@@ -111,11 +111,11 @@ const questions = [
   { type: "OX", text: "Q1. 경제심리지수는 기업과 소비자를 모두 포함한 민단의 경제상황을 종합적으로 파악하는데 사용된다.", answer: "O" },
   { type: "OX", text: "Q2. 금융상품 가입 시 예금자 보호가 가능한 상품은 보통 5천만 원까지 보호된다.", answer: "O" },
   {
-    type: "MCQ",
-    text: "Q3. 다음 중 1년 뒤 받을 금액이 가장 큰 금융상품은?",
-    options: ["예금 이율 3%", "예금 이율 2.5%", "예금 이율 2%", "예금 이율 1.5%"],
-    answer: "예금 이율 3%",
-  },
+  type: "MCQ",
+  text: "Q4. 다음 가사의 노래를 부른 가수는 누구일까요?\n\n'그런 날이 있을까요?\n마냥 좋은 그런 날이요\n내일 걱정 하나 없이\n웃게 되는 그런 날이요'",
+  options: ["뉴진스", "씨엔블루", "엔플라잉", "Day6"],
+  answer: "Day6",
+},
   {
     type: "MCQ",
     text: "Q4. 다음 중 주식 투자의 기본 원칙에 해당하지 않는 것은?",

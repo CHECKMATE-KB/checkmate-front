@@ -72,6 +72,9 @@ export default {
   text-decoration: none;
   display: flex;
   align-items: center;
+  position: relative;
+  right: 50px;
+  bottom: 40px;
 }
 
 .github-link i {

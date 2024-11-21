@@ -61,7 +61,7 @@
       </div>
     </section>
     <div class="additional-section">
-      <img src="@/assets/images/mainicon.png" alt="Main Icon" class="main-icon" />
+      <img src="@/assets/images/profiles/profile3.png" alt="Main Icon" class="main-icon" />
       <button class="start-quiz-button">체크메이트 가입하기</button>
       <p class="join-text">체크메이트에 가입하고 다양한 소비 챌린지를 통해 착한 소비 습관을 만들어 보세요! <br>함께 도전하며 경제적 여유를 찾고, 똑똑한 소비의 즐거움을 느껴보세요!</p>
     </div>
@@ -328,6 +328,7 @@ onMounted(() => {
   position: relative;
   margin-top: 0; /* 이미지 위치 조정 */
   left: 100px;
+  top:117px;
 }
 
 .quiz-image .primary-image {
@@ -351,7 +352,7 @@ onMounted(() => {
   color: #333;
   max-width: 500px;
   position: relative;
-  top: -80px;
+  top: 67px;
   left: 140px;
   width: 900px;
 }
@@ -405,7 +406,7 @@ onMounted(() => {
   pointer-events: none; /* 클릭 이벤트 방지 */
 }
 .main-icon {
-  width: 312px;
+  width: 450px;
   height: auto;
   display: block;
   margin: 0 auto;

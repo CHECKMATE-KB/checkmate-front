@@ -149,12 +149,13 @@ const handleLogin = async () => {
 
     try {
         const response = await axios.post('api/user/login', user);
-        const { token, userNo, nickName, userImg } = response.data; // 서버로부터 받은 토큰과 userNo
+        const { token, userNo, nickName, userImg, userId } = response.data; // 서버로부터 받은 토큰과 userNo
         
         // 토큰을 로컬 스토리지에 저장
         localStorage.setItem('token', token);
         localStorage.setItem('userNo', userNo);
         localStorage.setItem('nickName', nickName);
+        localStorage.setItem('userId', userId);
         localStorage.setItem('userImg', userImg); // 프로필 사진 저장
         storenickName.value = nickName; // 전역 상태 업데이트
         

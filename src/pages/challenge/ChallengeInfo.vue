@@ -8,7 +8,7 @@
       <button class="slider-button left" @click="prevSlide">‹</button>
       <div
         class="slider"
-        :style="{ transform: `translateX(-${currentIndex * (100 / visibleSlides)}%)` }"
+        :style="{ transform: `translateX(-${currentIndex * (100 / (visibleSlides+4))}%)` }"
       >
         <div
           class="slide"
@@ -81,10 +81,12 @@
   ]);
 
 
-  const members = ref([]);
+  
   const currentIndex = ref(0);
   const visibleSlides = ref(3);
   const selectedImage = ref(images[0]);
+  
+
   
 
   const fetchChallengeInfo = async () => {
@@ -104,7 +106,16 @@
     errorMessage.value = "Failed to fetch challenge info.";
     console.error("Error fetching challenge info:", error);
   }
-};
+}; 
+
+  const memberPoints = [
+    { src: saving1, alt: "Challenge 1", data: { quiz: [], challenge: [] } },
+    { src: saving2, alt: "Challenge 2", data: { quiz: [200, 400, 600, 2000, 1000], challenge: [1000, 800, 700, 600, 500] } },
+    { src: saving3, alt: "Challenge 3", data: { quiz: [300, 500, 700, 900, 1100], challenge: [1200, 900, 800, 700, 600] } },
+    { src: saving4, alt: "Challenge 4", data: { quiz: [400, 600, 800, 1000, 1200], challenge: [1500, 1200, 1000, 900, 800] } },
+    { src: saving5, alt: "Challenge 5", data: { quiz: [500, 700, 900, 1100, 1300], challenge: [1700, 1400, 1200, 1100, 1000] } },
+    { src: saving6, alt: "Challenge 6", data: { quiz: [600, 800, 1000, 1200, 1400], challenge: [1900, 1600, 1400, 1300, 1200] } },
+  ];
 
   // 차트 데이터 및 옵션
   const chartData = ref({
@@ -167,39 +178,47 @@
   return gradient;
 };
 
-// 차트 업데이트
-const updateChart = () => {
-  if (selectedImage.value.src === saving1) {
-    chartData.value = { labels: [], datasets: [] };
-  } else {
-    const ctx = document.createElement("canvas").getContext("2d");
+  const updateChart = () => {
+    const selectedMember = memberPoints.find(
+      (member) => member.src === selectedImage.value.src
+    );
 
-    const createSolidColor = (color) => {
-      return color; // 단색으로 설정
-    };
-    
-    const challengePoints = selectedImage.value.data.challenge;
-    
+    if (!selectedMember) {
+      chartData.value = { labels: [], datasets: [] };
+      return;
+    }
 
-    // const sortedIndices = totalPoints
-    //   .map((value, index) => ({ value, index }))
-    //   .sort((a, b) => b.value - a.value)
-    //   .map((item) => item.index);
+    const { quiz, challenge } = selectedMember.data;
+    const totalPoints = quiz.map((q, i) => q + challenge[i]);
+
+    // 포인트별 정렬
+    const sortedIndices = totalPoints
+      .map((value, index) => ({ value, index }))
+      .sort((a, b) => b.value - a.value)
+      .map((item) => item.index);
 
     chartData.value = {
       labels: sortedIndices.map((i) => ["정단호", "홍세영", "황현석", "정예슬", "이조은"][i]),
       datasets: [
-        
+        {
+          label: "퀴즈 포인트",
+          data: sortedIndices.map((i) => quiz[i]),
+          backgroundColor: "rgba(54, 162, 235, 0.7)", // 파란색
+        },
         {
           label: "챌린지 포인트",
-          data: sortedIndices.map((i) => challengePoints[i]),
-          backgroundColor: createSolidColor("rgba(40, 167, 69, 1)"), // 진한 초록색
-        }
-        
+          data: sortedIndices.map((i) => challenge[i]),
+          backgroundColor: "rgba(75, 192, 192, 0.7)", // 초록색
+        },
+        {
+          label: "통합 포인트",
+          data: sortedIndices.map((i) => totalPoints[i]),
+          backgroundColor: "rgba(255, 206, 86, 0.7)", // 노란색
+        },
       ],
     };
-  }
-};
+  };
+
   
   // 이전 슬라이드
   const prevSlide = () => {

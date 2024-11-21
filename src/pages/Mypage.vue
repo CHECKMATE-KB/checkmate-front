@@ -70,10 +70,10 @@
         <div class="modal">
           <h3>지출 상세 정보</h3>
           <ul>
-            <li><strong>금액:</strong> ₩{{ modalData.price }}</li>
-            <li><strong>카테고리:</strong> {{ modalData.historyCategory }}</li>
-            <li><strong>카드 번호:</strong> {{ modalData.cardNo }}</li>
-            <li><strong>날짜:</strong> {{ formatDate(modalData.historyDate) }}</li>
+            <li><strong>금액:</strong> ₩{{ modalData.price || 'N/A' }}</li>
+            <li><strong>카테고리:</strong> {{ modalData.historyCategory || 'N/A' }}</li>
+            <li><strong>카드 번호:</strong> {{ modalData.cardNo || 'N/A' }}</li>
+            <li><strong>날짜:</strong> {{ modalData.historyDate ? formatDate(modalData.historyDate) : 'N/A' }}</li>
           </ul>
           <button class="close-button" @click="closeModal">닫기</button>
         </div>
@@ -321,20 +321,15 @@ const initializeCalendar = () => {
       events: events.value,
       eventClick: (info) => {
         console.log("Clicked event data:", info.event.extendedProps);
-        modalData.value = {
-          price: info.event.extendedProps.price,
-          historyCategory: info.event.extendedProps.historyCategory,
-          cardNo: info.event.extendedProps.cardNo,
-          historyDate: info.event.extendedProps.historyDate,
-        };
-        isModalVisible.value = true;
+
+        // 모달 데이터 업데이트
+        openModal(info.event.extendedProps);
       },
     });
 
     fullCalendar.render();
   }
 };
-
 
 // 모달 닫기 함수
 const closeModal = () => {
@@ -576,6 +571,16 @@ onMounted(async () => {
   initializeCalendar(); // 캘린더 초기화
   await fetchCards(); 
 });
+
+const openModal = (data) => {
+  modalData.value = {
+    price: data.price || 0,
+    historyCategory: data.historyCategory || "미분류",
+    cardNo: data.cardNo || "N/A",
+    historyDate: data.historyDate || new Date(),
+  };
+  isModalVisible.value = true; // 모달 열기
+};
 
 </script>
 
@@ -1100,23 +1105,41 @@ onMounted(async () => {
   position: fixed;
   top: 0;
   left: 0;
-  width: 1030%;
+  width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
+  background: rgba(0, 0, 0, 0.5); /* 어두운 배경 */
+  display: flex !important; /* 항상 flex로 표시 */
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  opacity: 1 !important; /* 투명도 강제 */
+  visibility: visible !important; /* 가시성 강제 */
 }
 
 .modal {
+  position: relative; /* 부모 안에서 정렬 */
   background: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   width: 300px;
   text-align: left;
+  animation: fadeIn 0.3s ease-in-out; /* 부드러운 등장 효과 */
+  display: block !important; /* 강제 표시 */
+  visibility: visible !important; /* 가시성 강제 */
 }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 
 .close-button {
   background-color: #f44336;

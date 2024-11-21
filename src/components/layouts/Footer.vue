@@ -4,7 +4,7 @@
           <div class="footer-left w-100">
               <img class="logo" src="../../assets/images/cmlogo2.png" alt="Logo" />
               <div class="w-100">
-                  <h3 class="h3" style="color: black">KB IT's Your Life 5기 BUDUNGS</h3>
+                  <h3 class="h3" style="color: black">KB IT's Your Life 5기(KB 해커톤) - 모으GO 달성하조</h3>
                   <div class="fs-sm mb-1">서울 광진구 능동로 195-16 6층 (멀티캠퍼스 세종대)</div>
                   <div class="fs-sm mb-1">Designed by 이조은, 정단호, 정예슬, 홍세영, 황현석</div>
                   <div class="fs-sm mb-1 w-100 d-flex">
@@ -47,7 +47,7 @@ export default {
   left: 0; /* 화면의 가장 왼쪽부터 시작 */
   margin: 0; /* margin 초기화 */
   position: relative;
-  bottom: 100px;
+  bottom: 60px;
 }
 
 .footer-container {

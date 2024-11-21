@@ -578,10 +578,15 @@ const closeCardModal = () => {
   isCardModalVisible.value = false;
 };
 
+// const userId = localStorage.get("userId");
+// console.log("dfadf"  + userId);
 /* --------------------------
    컴포넌트 초기화
 -------------------------- */
 onMounted(async () => {
+
+const userId = localStorage.getItem("userId");
+console.log("dfadf"  + userId);
   await fetchUserProfile(); // 사용자 프로필 로드
   await fetchBuyHistory(); // 소비 내역 로드
   initializeCalendar(); // 캘린더 초기화

@@ -61,7 +61,7 @@
       </div>
     </section>
     <div class="additional-section">
-      <img src="@/assets/images/profiles/profile3.png" alt="Main Icon" class="main-icon" />
+      <img src="@/assets/images/profiles/profile3_temp.png" alt="Main Icon" class="main-icon" />
       <button class="start-quiz-button" @click="goTouserJoin">체크메이트 가입하기</button>
       <p class="join-text">체크메이트에 가입하고 다양한 소비 챌린지를 통해 착한 소비 습관을 만들어 보세요! <br>함께 도전하며 경제적 여유를 찾고, 똑똑한 소비의 즐거움을 느껴보세요!</p>
     </div>

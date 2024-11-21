@@ -355,12 +355,11 @@ import { storeUserImg } from '../stores/userState';
 
 // 프로필 이미지 후보 경로 배열
 const profileImages = [
-    '../../src/assets/images/profiles/profile1.png',
-    '../../src/assets/images/profiles/profile2.png',
-    '../../src/assets/images/profiles/profile3.png',
-    '../../src/assets/images/profiles/profile4.png',
-    '../../src/assets/images/profiles/profile5.png',
-    '../../src/assets/images/profiles/profile6.png',
+    '../../src/assets/images/profiles/profile1.jpg',
+    '../../src/assets/images/profiles/profile2.jpg',
+    '../../src/assets/images/profiles/profile3.jpg',
+    '../../src/assets/images/profiles/profile4.jpg',
+    '../../src/assets/images/profiles/profile5.jpg',
 ];
 
 // 프로필 이미지 선택 함수

@@ -64,7 +64,7 @@
 
       <div class="messages-section">
         <div class="calendar-section">
-        <h3>지출 내역</h3>
+        <h3 style="color:white">지출 내역</h3>
         <div ref="calendar" id="full-calendar" class="small-calendar"></div>
       </div>
       <!-- <div v-if="isModalVisible" class="modal-overlay">
@@ -144,7 +144,7 @@
 
       <div class="patients-section">
         <div class="section-header">
-          <h2>등록된 카드목록</h2>
+          <h2 style="color:white">등록된 카드목록</h2>
           <button class="add-card-btn" @click="openCardModal">카드 등록</button>
         </div>
         <!-- <div class="patient-list">
@@ -763,7 +763,8 @@ const openModal = async (data) => {
 
 /* 메세지 섹션 */
 .messages-section {
-  background: #ffffff;
+  background: url('@/assets/images/tipback2.png') no-repeat center center;
+  background-size: cover;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -772,7 +773,8 @@ const openModal = async (data) => {
 
 /* 카드 섹션 */
 .patients-section {
-  background: #ffffff;
+  background: url('@/assets/images/tipback2.png') no-repeat center center;
+  background-size: cover;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

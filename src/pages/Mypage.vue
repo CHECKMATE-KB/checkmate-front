@@ -821,43 +821,44 @@ onMounted(async () => {
   margin-top:20px;
 }
 
-/* 캘린더 배경 스타일 */
+/* 캘린더 제목 스타일 */
 .fc .fc-toolbar-title {
   font-size: 20px !important;
-  color: #4CAF50 !important;
+  color: #555 !important; /* 회색으로 변경 */
   font-weight: bold !important;
 }
 
+/* 캘린더 버튼 스타일 */
 .fc .fc-button {
-  background-color: #4CAF50 !important;
-  color: white !important;
+  background-color: #ccc !important; /* 회색 배경 */
+  color: #333 !important; /* 회색 글씨 */
   border: none !important;
   border-radius: 5px !important;
   padding: 5px 10px !important;
 }
 .fc .fc-button:hover {
-  background-color: #45a049 !important;
+  background-color: #bbb !important; /* 더 어두운 회색 */
 }
 
 /* 날짜 셀 스타일 */
 .fc-daygrid-day {
-  border: 1px solid #f0f0f0 !important;
+  border: 1px solid #e0e0e0 !important;
   padding: 10px !important;
   transition: background-color 0.2s !important;
 }
 .fc-daygrid-day:hover {
-  background-color: #f9f9f9 !important;
+  background-color: #f0f0f0 !important;
 }
 
 /* 오늘 날짜 강조 */
 .fc-day-today {
-  background-color: rgba(76, 175, 80, 0.1) !important;
-  border: 1px solid #4CAF50 !important;
+  background-color: rgba(128, 128, 128, 0.1) !important; /* 연한 회색 */
+  border: 1px solid #888 !important; /* 진한 회색 테두리 */
 }
 
 /* 이벤트 스타일 */
 .fc-event {
-  background-color: #4CAF50 !important;
+  background-color: #888 !important; /* 진한 회색 */
   color: #fff !important;
   border-radius: 5px !important;
   padding: 5px !important;

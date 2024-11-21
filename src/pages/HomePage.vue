@@ -39,8 +39,7 @@
       </div>
     </div>
 
-    <!-- 퀴즈 섹션 -->
-    <section class="quiz-section">
+    <div class="quiz-section">
       <div class="quiz-content">
         <div class="quiz-image">
           <img src="@/assets/images/quizmockup.png" alt="Quiz 1" class="fade-wrap" />
@@ -59,7 +58,39 @@
           </ul>
         </div>
       </div>
-    </section>
+    </div>
+
+    <!-- Card Section -->
+    <div class="card-section">
+      <!-- 첫 번째 카드 -->
+      <div class="card-row fade-wrap">
+        <div class="card-image card1-adjust">
+          <img src="@/assets/images/card.png" alt="Card Image 1" />
+        </div>
+        <div class="card-text text1-adjust">
+          <h4>편리한 카드등록</h4>
+          <p>편리하게 카드등록 후 챌린지에 참여해보세요</p>
+          <p>적립한 포인트로 다양한 혜택을 경험하세요!</p>
+        </div>
+      </div>
+
+      <!-- 두 번째 카드 -->
+      <div class="card-row fade-wrap">
+        <div class="card-text text2-adjust">
+          <h4>재밌는 챌린지 참여</h4>
+          <p>즐겁게 도전하며 똑똑한 소비 습관을 만들어보세요!</p>
+          <p>포인트를 쌓아 다양한 혜택까지 누릴 수 있어요!</p>
+        </div>
+        <div class="card-image card2-adjust">
+          <img src="@/assets/images/card2.png" alt="Card Image 2" />
+        </div>
+      </div>
+    </div>
+
+
+
+
+
     <div class="additional-section">
       <img src="@/assets/images/profiles/profile3.png" alt="Main Icon" class="main-icon" />
       <button class="start-quiz-button">체크메이트 가입하기</button>
@@ -69,16 +100,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 
+// 다음 섹션을 참조하기 위한 ref 설정
 const contentSection = ref(null);
 
+// 스크롤 이벤트 메서드 추가
 const scrollToContent = () => {
   if (contentSection.value) {
-    contentSection.value.scrollIntoView({ behavior: "smooth" });
+    contentSection.value.scrollIntoView({
+      behavior: "smooth", // 부드럽게 이동
+      block: "start", // 섹션 시작 지점으로 이동
+    });
   }
 };
 
+// 기존 fade-in 애니메이션 유지
 onMounted(() => {
   const observer = new IntersectionObserver(
       (entries) => {
@@ -98,7 +135,99 @@ onMounted(() => {
 });
 </script>
 
+
 <style scoped>
+/* 초기 상태 - 아래로 숨김 */
+.fade-wrap {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+/* 스크롤 시 보이는 상태 */
+.fade-wrap.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card-section {
+  margin: 50px 0;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.card-row.reverse {
+  flex-direction: row-reverse;
+}
+
+.card-text {
+  flex: 1;
+  padding: 20px;
+}
+
+.card-text h4 {
+  margin-bottom: 10px;
+  font-size: 60px;
+  color: #559aff;
+  width: 481px;
+}
+
+.card-text p {
+  font-size: 22px;
+  color: #333;
+  line-height: 1.5;
+  width: 490px;
+}
+
+.card-image {
+  flex: 1;
+  text-align: center;
+}
+
+.card-image img {
+  max-width: 910px;
+  height: auto;
+  border-radius: 10px;
+  position: relative;
+  top: 110px;
+}
+/* 기존 카드 위치 조정 */
+.card1-adjust {
+  margin-left: -102px;
+  position: relative;
+  top: 50px;
+}
+
+.card2-adjust {
+  margin-right: -44px;
+  position: relative;
+  right: 100px;
+  bottom:-30px;
+
+}
+
+/* 텍스트 위치 조정 */
+.text1-adjust {
+  margin-right: 51px;
+  position: relative;
+  bottom: 200px;
+  left: -95px;
+}
+
+.text2-adjust {
+  margin-right: 51px;
+  position: relative;
+  bottom: 250px;
+  left: 60px;
+}
+
+
+
 .quiz-image img,
 .quiz-image .secondary-image,
 .quiz-text {
@@ -286,6 +415,7 @@ onMounted(() => {
   flex-shrink: 0;
   border-radius: 20px;
   transition: transform 0.3s ease;
+  margin:20px 0px;
 }
 
 .challenge-card:hover {
@@ -297,7 +427,12 @@ onMounted(() => {
   flex-shrink: 0;
   border-radius: 20px;
 }
-
+.card-section {
+  margin: 50px 0;
+  padding: 20px; /* 내용과 경계 사이의 여백 */
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 1), #dddddd, rgba(255, 255, 255, 1));
+  border-radius: 10px; /* 코너를 부드럽게 만듦 */
+}
 .arrow-icon {
   width: 40px;
   height: 40px;
@@ -348,21 +483,38 @@ onMounted(() => {
 
 
 .quiz-text {
-  font-size: 20px;
-  color: #333;
-  max-width: 500px;
+  font-size: 22px; /* 본문 글자 크기 */
+  color: #333; /* 기본 글자 색 */
+  max-width: 800px; /* 가로 길이 확장 */
   position: relative;
   top: 67px;
-  left: 140px;
-  width: 900px;
+  left: 80px; /* 왼쪽으로 더 이동 */
+  line-height: 1.8; /* 가독성을 위해 줄 간격 확대 */
 }
+
+.quiz-text h3 {
+  font-size: 30px; /* 제목 글자 크기 확대 */
+  color: #559aff; /* 제목 글자 파란색 적용 */
+  margin-bottom: 20px;
+  width: 420px;
+}
+
+.quiz-text p {
+  font-size: 20px; /* 본문 글자 크기 */
+  color: #333; /* 본문 색상 */
+}
+
 .quiz-text ul {
   padding-left: 20px;
+  list-style: disc;
 }
 
 .quiz-text li {
-  list-style: disc;
+  font-size: 20px; /* 리스트 글자 크기 확대 */
+  color: #333; /* 리스트 색상 */
+  margin-bottom: 10px;
 }
+
 .start-quiz-button {
   margin-top: 20px;
   padding: 10px 20px;
@@ -378,9 +530,9 @@ onMounted(() => {
 /*
 .additional-section {
   text-align: center;
-  margin: 20px 0; 
+  margin: 20px 0;
   background: url("@/assets/images/mainbg.png") no-repeat center center / cover;
-  padding: 20px; 
+  padding: 20px;
   position: relative;
   top: -360px;
 }
@@ -406,14 +558,14 @@ onMounted(() => {
   pointer-events: none; /* 클릭 이벤트 방지 */
 }
 .main-icon {
-  width: 450px;
+  width: 473px;
   height: auto;
   display: block;
   margin: 0 auto;
   position: relative;
-  bottom: -45px;
-  right: 420px;
-  z-index: 10; /* 다른 요소보다 위에 표시되도록 설정 */
+  bottom: -119px;
+  right: 459px;
+  z-index: 10;
 }
 
 .start-quiz-button {
@@ -441,8 +593,8 @@ onMounted(() => {
   font-weight: bold;
   margin-top: 10px;
   position: relative;
-  bottom: 232px;
-  left: 134px;
+  bottom: 224px;
+  left: 102px;
   z-index: 10;
   color: #5a5a5a;
 }

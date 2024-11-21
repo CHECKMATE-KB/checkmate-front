@@ -40,14 +40,13 @@ export default {
 .footer {
   background-color: white;
   color: white;
-  padding: 50px 0; /* 상하 여백만 설정 */
+  margin-top: 25px !important; /* 상하 여백만 설정 */
   font-family: 'Arial', sans-serif;
   width: 100%; /* 100%로 설정 */
   position: relative; /* 명시적으로 relative 설정 */
   left: 0; /* 화면의 가장 왼쪽부터 시작 */
   margin: 0; /* margin 초기화 */
   position: relative;
-  bottom: 60px;
 }
 
 .footer-container {

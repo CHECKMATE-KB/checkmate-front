@@ -1,29 +1,67 @@
 <template>
     <div class="challenge-page">
-      <div class="components-container">
+      <div v-if="teamNo" class="components-container">
         <!-- 첫 번째 컴포넌트 -->
-        <ChallengeMain />
+        <ChallengeMain v-if="teamNo" :teamNo="teamNo"/>
         <!-- 두 번째 컴포넌트 -->
         <div class="component-section with-background">
-          <ChallengeMain2 />
+          <ChallengeMain2 v-if="teamNo" :teamNo="teamNo"/>
         </div>
         <!-- 세 번째 컴포넌트 -->
         <div class="component-section with-background-third">
-          <ChallengeMain3 />
+          <ChallengeMain3 v-if="teamNo" :teamNo="teamNo" />
         </div>
         <!-- 네 번째 컴포넌트 -->
         <div class="component-section with-background-fourth">
-          <ChallengeMain4 />
+          <ChallengeMain4 v-if="teamNo" :teamNo="teamNo"/>
         </div>
+      </div>
+      <div v-else>
+        <ChallengeStart/>
       </div>
     </div>
   </template>
   
   <script setup>
+  import ChallengeStart from "@/pages/challenge/ChallengeStart.vue";
   import ChallengeMain from "@/pages/challenge/ChallengeMain.vue";
   import ChallengeMain2 from "@/pages/challenge/ChallengeMain2.vue";
   import ChallengeMain3 from "@/pages/challenge/ChallengeMain3.vue";
   import ChallengeMain4 from "@/pages/challenge/ChallengeMain4.vue";
+  // import { useRoute } from 'vue-router';
+  import { ref, onMounted } from 'vue';
+  import axios from 'axios';
+  
+  // const route = useRoute();
+  const userNo= ref(null);
+  const teamNo = ref(0);
+  const challenges = ref([]);
+
+  // API 호출 함수
+  const fetchMyTeamData = async () => {
+    try {
+      userNo.value=localStorage.getItem("userNo");
+      const response = await axios.get(`http://localhost:8080/api/user/${userNo.value}/myteam`);
+      teamNo.value = parseInt(response.data); // API 응답 데이터를 저장
+      
+      console.log("Fetched my team data:", teamNo.value);
+    } catch (error) {
+      errorMessage.value = "Failed to fetch team data.";
+      console.error("Error fetching my team data:", error);
+    }
+  };
+
+
+
+  onMounted(() => {
+    // 팀 번호 조회
+    
+    fetchMyTeamData();
+    
+  });
+
+
+    
   </script>
   
   <style>

@@ -43,9 +43,9 @@ import axios from 'axios';
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 
-
 // 유저 데이터
-const teamNo = ref(3); 
+const teamNo=ref(0);
+const props= defineProps(['teamNo']); 
 const users=ref([]);
 
 const getBackgroundStyle = (index) => {
@@ -92,6 +92,7 @@ const chartOptions = ref({
 
 const fetchTeamScore = async () => {
   try {
+    teamNo.value=props.teamNo;
     const response = await axios.get(`http://localhost:8080/api/team/score/${teamNo.value}`);
     users.value = response.data; // API 응답 데이터를 teamScore에 저장
     for(let i=0;i<users.value.length;i++) {

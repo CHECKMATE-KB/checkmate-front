@@ -56,7 +56,6 @@ const getBackgroundStyle = (index) => {
 };
 
 
-
 // 4등부터 6등 데이터
 const otherRanks = users.value.slice(3, 5);
 

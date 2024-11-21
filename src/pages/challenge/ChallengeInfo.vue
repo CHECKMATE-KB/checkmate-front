@@ -24,7 +24,7 @@
     </div>
 
     <!-- 선택된 이미지와 차트 -->
-    <!-- <div v-if="selectedImage && selectedImage.src !== saving1" class="selected-content">
+    <div v-if="selectedImage && selectedImage.src !== saving1" class="selected-content">
       <div class="selected-image-container">
         <button class="selected-image-button left" @click="prevSlide">‹</button>
         <img :src="selectedImage.src" alt="test" class="selected-image" />
@@ -33,7 +33,7 @@
       <div class="chart-container2">
         <Bar :data="chartData" :options="chartOptions" />
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
   

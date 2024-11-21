@@ -12,7 +12,10 @@ import { storenickName } from '@/stores/userState'; // 전역 상태 가져오�
 const router = useRouter();
 
 // 상태 관리
-// const userNo = ref(''); // 로그인한 유저 번호
+const userNo = ref(''); // 로그인한 유저 번호
+const teamNo= ref(0);  // 팀 번호
+
+
 
 // 로그인 상태 확인 함수
 const checkLogin = () => {
@@ -23,6 +26,9 @@ const checkLogin = () => {
     storenickName.value = ''; // 상태 초기화 (비로그인 상태)
   }
 };
+
+
+
 
 // 로그아웃 함수
 const handleLogout = () => {
@@ -35,9 +41,12 @@ const handleLogout = () => {
   router.push('/'); // 메인 페이지로 이동
 };
 
+
+
 // 컴포넌트가 로드될 때 로그인 상태 확인
-onMounted(() => {
+onMounted(() => {  
   checkLogin();
+  
 });
 
 // 상태 변화 감지 및 UI 업데이트
@@ -47,6 +56,7 @@ watchEffect(() => {
 
 // 프로필 이미지 상태 가져오기
 import { storeUserImg } from '../../stores/userState';
+
 </script>
 
 <template>
@@ -59,8 +69,10 @@ import { storeUserImg } from '../../stores/userState';
       <nav class="nav">
         <!-- 메뉴 항목 -->
         <router-link to="/" class="nav-item">메인</router-link>
+
         <router-link to="/challenge" class="nav-item">챌린지</router-link>
         <router-link to="/quizstart" class="nav-item">퀴즈</router-link>
+
         <router-link to="/mypage" class="nav-item">마이페이지</router-link>
       </nav>
       <div class="auth-buttons">

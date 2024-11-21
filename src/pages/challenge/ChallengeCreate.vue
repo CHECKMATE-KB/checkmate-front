@@ -8,11 +8,11 @@
       </div>
       <!-- 우측 폼 -->
       <div class="form-container">
-        <h1>챌린지 생성</h1>
+        <h1>팀 생성</h1>
         <!-- 챌린지명 -->
         <div class="form-group">
-          <label for="challengeName">챌린지명</label>
-          <input type="text" id="challengeName" v-model="challenge.name" placeholder="챌린지명을 입력하세요" />
+          <label for="challengeName">팀명</label>
+          <input type="text" id="challengeName" v-model="challenges.teamName" placeholder="팀명을 입력하세요" />
         </div>
         <!-- 챌린지 선택 -->
         <div class="form-group">
@@ -56,11 +56,11 @@
         </div>
         <div class="form-group">
           <label for="startDate">시작 기간</label>
-          <input type="date" id="startDate" v-model="challenge.startDate" disabled />
+          <input type="date" id="startDate" v-model="challenges.startDate" disabled />
         </div>
         <div class="form-group">
           <label for="endDate">종료 기간</label>
-          <input type="date" id="endDate" v-model="challenge.endDate" />
+          <input type="date" id="endDate" v-model="challenges.teamEnd" />
         </div>
         <!-- 초대할 유저 -->
         <div class="form-group">
@@ -70,15 +70,15 @@
         </div>
         <!-- 초대 리스트 -->
         <div class="invite-list">
-          <h3>초대 리스트 (본인 포함 {{ challenge.invitedUsers.length + 1 }}/5명)</h3>
+          <h3>초대 리스트 (본인 포함 {{ challenges.members.length + 1 }}/5명)</h3>
           <ul>
-            <li v-for="(user, index) in challenge.invitedUsers" :key="index">
+            <li v-for="(user, index) in challenges.members" :key="index">
               {{ user }}
               <button @click="removeInvite(index)">제거</button>
             </li>
           </ul>
         </div>
-        <button class="submit-btn" @click="createChallenge">챌린지 생성</button>
+        <button class="submit-btn" @click="createChallengeTeam">챌린지 생성</button>
       </div>
     </div>
   </div>
@@ -86,26 +86,35 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import axios from 'axios';
+// 서버 응답 상태 관리
+const responseMessage = ref(null);
+const errorMessage = ref(null);
+
 
 // 챌린지 데이터
 const challengeOptions = ref([
-  { id: 1, name: "커피값 절약", targets: ["10,000 원", "35,000 원"] },
-  { id: 2, name: "체크카드 이용하기", targets: ["100,000 원", "200,000 원"] },
-  { id: 3, name: "점심값 절약", targets: ["30,000 원", "50,000 원"] },
-  { id: 4, name: "교통비 절약하기", targets: ["40,000 원", "100,000 원"] },
-  { id: 5, name: "주말 유흥 절약하기", targets: ["20,000 원", "50,000 원"] },
+  { id: 1, name: "커피값 절약", targets: [10000, 35000] },
+  { id: 2, name: "체크카드 이용하기", targets: [100000, 200000] },
+  { id: 3, name: "점심값 절약", targets: [30000, 50000] },
+  { id: 4, name: "교통비 절약하기", targets: [40000, 100000] },
+  { id: 5, name: "주말 유흥 절약하기", targets: [20000, 50000] },
 ]);
 
+
+
+
 const selectedChallenge = ref(null);
-const selectedTargetAmount = ref("");
+const selectedTargetAmount = ref([]);
 const selectedChallenges = ref([]);
 
-const challenge = ref({
-  name: "",
-  startDate: "",
-  endDate: "",
-  targetAmount: "",
-  invitedUsers: [],
+const challenges = ref({
+  ccNo: [],
+  teamName: "",
+  teamStart: "",
+  teamEnd: "",
+  chLimit: [],
+  members: [],
 });
 
 const inviteUser = ref("");
@@ -129,8 +138,8 @@ const getOneWeekLater = () => {
   return new Date(today.setDate(today.getDate() + 7)).toISOString().split("T")[0];
 };
 
-challenge.value.startDate = getToday();
-challenge.value.endDate = getOneWeekLater();
+challenges.value.teamStart = getToday();
+challenges.value.teamEnd = getOneWeekLater();
 
 // 챌린지 선택 시 목표 금액 업데이트
 const updateTargetOptions = () => {
@@ -141,9 +150,19 @@ const updateTargetOptions = () => {
   }
 };
 
+
+const getIdByName = (name) => {
+  const option = challengeOptions.value.find((item) => item.name === name);
+  return option ? option.id : null; // id를 찾으면 반환, 없으면 null 반환
+};
+
+
 // 선택한 챌린지 추가
 const addSelectedChallenge = () => {
   if (selectedChallenge.value && selectedTargetAmount.value) {
+    challenges.value.ccNo.push(getIdByName(selectedChallenge.value.name));
+    challenges.value.chLimit.push(selectedTargetAmount.value);
+
     selectedChallenges.value.push({
       id: selectedChallenge.value.id,
       name: selectedChallenge.value.name,
@@ -164,12 +183,12 @@ const removeSelectedChallenge = (index) => {
 
 // 초대 관련 로직
 const addInvite = () => {
-  if (challenge.value.invitedUsers.length >= 4) {
+  if (challenges.value.members.length >= 4) {
     alert("참여 인원은 본인 포함 최대 5명까지만 가능합니다.");
     return;
   }
-  if (inviteUser.value && !challenge.value.invitedUsers.includes(inviteUser.value)) {
-    challenge.value.invitedUsers.push(inviteUser.value);
+  if (inviteUser.value && !challenges.value.members.includes(inviteUser.value)) {
+    challenges.value.members.push(inviteUser.value);
     inviteUser.value = "";
   }
 };
@@ -178,16 +197,29 @@ const removeInvite = (index) => {
   challenge.value.invitedUsers.splice(index, 1);
 };
 
-// 챌린지 생성
-const createChallenge = () => {
-  if (challenge.value.name && selectedChallenges.value.length > 0) {
-    console.log("생성된 챌린지:", challenge.value);
-    console.log("선택된 챌린지 리스트:", selectedChallenges.value);
-    alert("챌린지가 생성되었습니다!");
-  } else {
-    alert("모든 필드를 입력하고 챌린지를 선택하세요.");
+
+
+// POST 요청 함수
+const createChallengeTeam = async () => {
+  // if (challenges.value.teamName && selectedChallenges.value.length > 0) {console.log(challenges.value);return;}
+  try {
+    const userId = localStorage.getItem("userId");
+
+    console.log(userId);
+    challenges.value.members.push(userId);
+    console.log(challenges.value);
+    const response = await axios.post("http://localhost:8080/api/challenge/team/create", challenges.value);
+    responseMessage.value = "Challenge team created successfully!";
+    console.log("Response:", response.data);
+  } catch (error) {
+    errorMessage.value = "Failed to create challenge team.";
+    console.error("Error:", error);
   }
 };
+
+
+
+
 </script>
 
 

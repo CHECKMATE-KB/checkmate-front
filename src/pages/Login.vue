@@ -23,7 +23,7 @@
             </form>
 
             <p class="login-link">
-                계정이 없나요? <a href="/userjoin" style="color:#FFB229;">회원가입하기</a>
+                계정이 없나요? <a href="/userjoin" style="color:#FAB809;">회원가입하기</a>
               </p>
         </div>
     </div>
@@ -84,7 +84,7 @@ input {
 .signup-button {
     width: 100%;
     padding: 10px;
-    background-color: #ffa500;
+    background-color: #FAB809;
     border: none;
     border-radius: 5px;
     color: white;
@@ -93,7 +93,7 @@ input {
 }
   
 .signup-button:hover {
-    background-color: #e69500;
+    background-color: #faa609;
 }
   
 .login-link {

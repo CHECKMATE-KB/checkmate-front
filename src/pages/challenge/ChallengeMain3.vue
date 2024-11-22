@@ -4,7 +4,7 @@
     <!-- 상위 3등 카드 -->
     <div class="top-three-container">
       <div
-        v-for="(user, index) in users"
+        v-for="(user, index) in users.slice(0,3)"
         :key="index"
         class="profile-card"
         :style="{ background: getBackgroundStyle(index)}"
@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { Bar } from "vue-chartjs";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
 import axios from 'axios';
@@ -56,9 +56,9 @@ const getBackgroundStyle = (index) => {
 };
 
 
-
 // 4등부터 6등 데이터
-const otherRanks = users.value.slice(3, 5);
+const otherRanks = computed(() => users.value.slice(3, 5));
+
 
 // 차트 데이터 초기화
 const chartData = ref(null);
@@ -78,7 +78,7 @@ const chartOptions = ref({
   scales: {
     x: {
       grid: { display: false },
-      max: 20000,
+      max: 500,
     },
     y: {
       grid: { display: false },
@@ -92,14 +92,30 @@ const chartOptions = ref({
 
 const fetchTeamScore = async () => {
   try {
-    teamNo.value=props.teamNo;
+    teamNo.value = props.teamNo;
     const response = await axios.get(`http://localhost:8080/api/team/score/${teamNo.value}`);
     users.value = response.data; // API 응답 데이터를 teamScore에 저장
-    for(let i=0;i<users.value.length;i++) {
-      users.value[i].userImg=new URL(users.value[i].userImg, import.meta.url).href;
-
-    }
     console.log("Fetched team score:", users.value);
+
+    // 이미지 URL 변환
+    for (let i = 0; i < users.value.length; i++) {
+      users.value[i].userImg = new URL(users.value[i].userImg, import.meta.url).href;
+    }
+
+    // otherRanks는 computed로 이미 계산됨
+    console.log("otherRanks:", otherRanks.value);
+
+    // 차트 데이터 설정
+    chartData.value = {
+      labels: otherRanks.value.map((user) => `${user.userName}`),
+      datasets: [
+        {
+          label: "포인트",
+          data: otherRanks.value.map((user) => user.totalPoint),
+          backgroundColor: ["#FFC1C1", "#FFECB1", "#D4F1B4"],
+        },
+      ],
+    };
   } catch (error) {
     console.error("Failed to fetch team score:", error);
   }
@@ -109,16 +125,7 @@ const fetchTeamScore = async () => {
 // 컴포넌트가 마운트되었을 때 데이터 설정
 onMounted(() => {
   fetchTeamScore();
-  chartData.value = {
-    labels: otherRanks.map((user) => `${user.rank}위 ${user.name}`),
-    datasets: [
-      {
-        label: "포인트",
-        data: otherRanks.map((user) => user.points),
-        backgroundColor: ["#FFC1C1", "#FFECB1", "#D4F1B4"],
-      },
-    ],
-  };
+  
 });
 </script>
 

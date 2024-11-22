@@ -284,14 +284,19 @@ button {
   position: relative;
   width: 100%;
   transition: background-color 0.3s;
+  font-weight: bold;
 }
 
 button.correct {
   background-color: #4CAF50; /* 파란색 */
+  color:white;
+  font-weight: bold;
 }
 
 button.incorrect {
   background-color: #F44336; /* 빨간색 */
+  color:white;
+  font-weight: bold;
 }
 
 button.selected {
@@ -332,5 +337,8 @@ button.selected {
   text-align: center;
   font-size: 18px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+.option-text{
+  margin-left: 27px;
 }
 </style>

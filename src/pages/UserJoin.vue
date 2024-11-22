@@ -2,7 +2,7 @@
     <!--  html 전체 영역 container -->
     <div id="page-container">
         <div class="left-container"> <!-- 좌측 이미지 영역 -->
-            <img src="../assets/images/logo.png" width="550px" height="700px">
+            <img src="../assets/images/logo.png" width="900px" height="600px" style="position: relative; left: -80px;">
         </div>
 
         <!-- 우측 회원가입 폼 영역 -->
@@ -62,7 +62,7 @@
             </form>
 
             <p class="login-link">
-                이미 계정이 있으신가요? <a href="/login" style="color:#FFB229;">로그인하기</a>
+                이미 계정이 있으신가요? <a href="/login" style="color:#FAB809;">로그인하기</a>
               </p>
         </div>
     </div>
@@ -125,7 +125,7 @@ input {
 .signup-button {
     width: 100%;
     padding: 10px;
-    background-color: #ffa500;
+    background-color: #FAB809;
     border: none;
     border-radius: 5px;
     color: white;
@@ -134,7 +134,7 @@ input {
 }
   
 .signup-button:hover {
-    background-color: #e69500;
+    background-color: #faa609;
 }
   
 .login-link {
@@ -144,7 +144,7 @@ input {
 }
 
 .duplicate-check-btn {
-    background-color: blue; 
+    background-color: #FAB809;
     color: white; 
     height: 40px; 
     padding: 0 15px; 
@@ -355,17 +355,18 @@ import { storeUserImg } from '../stores/userState';
 
 // 프로필 이미지 후보 경로 배열
 const profileImages = [
-    '../../src/assets/images/profiles/profile1.jpg',
-    '../../src/assets/images/profiles/profile2.jpg',
-    '../../src/assets/images/profiles/profile3.jpg',
-    '../../src/assets/images/profiles/profile4.jpg',
-    '../../src/assets/images/profiles/profile5.jpg',
+    new URL('@/assets/images/profiles/profile1.png', import.meta.url).href,
+    new URL('@/assets/images/profiles/profile2.png', import.meta.url).href,
+    new URL('@/assets/images/profiles/profile3.png', import.meta.url).href,
+    new URL('@/assets/images/profiles/profile4.png', import.meta.url).href,
+    new URL('@/assets/images/profiles/profile5.png', import.meta.url).href,
 ];
 
 // 프로필 이미지 선택 함수
 const selectProfileImage = (imagePath) => {
     user.userImg = imagePath; // 선택한 이미지 경로 저장
-    storeUserImg.value = '../' + imagePath; // 전역 상태 업데이트
+    console.log(storeUserImg);
+    storeUserImg.value = imagePath; // 전역 상태 업데이트
 };
 
 </script>

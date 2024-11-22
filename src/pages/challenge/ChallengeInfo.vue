@@ -8,7 +8,7 @@
       <button class="slider-button left" @click="prevSlide">‹</button>
       <div
         class="slider"
-        :style="{ transform: `translateX(-${currentIndex * (100 / visibleSlides)}%)` }"
+        :style="{ transform: `translateX(-${currentIndex * (100 / (visibleSlides+4))}%)` }"
       >
         <div
           class="slide"
@@ -17,7 +17,7 @@
           :class="{ active: index === currentIndex }"
           @click="selectImage(index)"
         >
-          <img :src="image.src" :alt="image.alt" />
+          <img :src="image.src" alt="test" />
         </div>
       </div>
       <button class="slider-button right" @click="nextSlide">›</button>
@@ -27,7 +27,7 @@
     <div v-if="selectedImage && selectedImage.src !== saving1" class="selected-content">
       <div class="selected-image-container">
         <button class="selected-image-button left" @click="prevSlide">‹</button>
-        <img :src="selectedImage.src" :alt="selectedImage.alt" class="selected-image" />
+        <img :src="selectedImage.src" alt="test" class="selected-image" />
         <button class="selected-image-button right" @click="nextSlide">›</button>
       </div>
       <div class="chart-container2">
@@ -38,8 +38,10 @@
 </template>
   
   <script setup>
-  import { ref } from "vue";
+  import { ref, onMounted } from 'vue';
   import { Bar } from "vue-chartjs";
+  import axios from 'axios';
+  import { useRoute } from 'vue-router';
   import {
     Chart as ChartJS,
     BarElement,
@@ -58,7 +60,55 @@
   import saving5 from "@/assets/images/saving5.png";
   import saving6 from "@/assets/images/saving1.png";
   
-  const images = [
+
+  const route = useRoute();
+  const teamNo = ref(null); // 라우트에서 teamNo 가져오기
+  const challengeInfo = ref(null); // API 응답 데이터 저장
+  const errorMessage = ref(null); // 에러 메시지 저장
+
+  const challenge_category= [
+    saving1,
+    saving6,
+    saving2,
+    saving3,
+    saving4,
+    saving5
+  ]
+
+
+  const images= ref([
+    {src: saving1, alt: "Challenge 1", data: {challenge: []}},
+  ]);
+
+
+  
+  const currentIndex = ref(0);
+  const visibleSlides = ref(3);
+  const selectedImage = ref(images[0]);
+  
+
+  
+
+  const fetchChallengeInfo = async () => {
+  try {
+    
+    teamNo.value=route.params.teamNo;
+    const response = await axios.get(`http://localhost:8080/api/team/challenge/${teamNo.value}`);
+    challengeInfo.value = response.data; // API 응답 데이터를 저장
+    
+    for(let i =0;i<challengeInfo.value.length;i++) {
+      images.value.push({src: challenge_category[challengeInfo.value[i].ccNo], data : {challenge:[1000, 800, 700, 600, 500]} });
+    }
+    visibleSlides.value=challengeInfo.value.length;
+    
+    console.log("Fetched challenge info:", images.value);
+  } catch (error) {
+    errorMessage.value = "Failed to fetch challenge info.";
+    console.error("Error fetching challenge info:", error);
+  }
+}; 
+
+  const memberPoints = [
     { src: saving1, alt: "Challenge 1", data: { quiz: [], challenge: [] } },
     { src: saving2, alt: "Challenge 2", data: { quiz: [200, 400, 600, 2000, 1000], challenge: [1000, 800, 700, 600, 500] } },
     { src: saving3, alt: "Challenge 3", data: { quiz: [300, 500, 700, 900, 1100], challenge: [1200, 900, 800, 700, 600] } },
@@ -66,11 +116,7 @@
     { src: saving5, alt: "Challenge 5", data: { quiz: [500, 700, 900, 1100, 1300], challenge: [1700, 1400, 1200, 1100, 1000] } },
     { src: saving6, alt: "Challenge 6", data: { quiz: [600, 800, 1000, 1200, 1400], challenge: [1900, 1600, 1400, 1300, 1200] } },
   ];
-  
-  const currentIndex = ref(0);
-  const visibleSlides = 3;
-  const selectedImage = ref(images[0]);
-  
+
   // 차트 데이터 및 옵션
   const chartData = ref({
     labels: [],
@@ -121,7 +167,7 @@
   // 이미지 클릭 시 처리
   const selectImage = (index) => {
     currentIndex.value = index;
-    selectedImage.value = images[index];
+    selectedImage.value = images.value[index];
     updateChart();
   };
   
@@ -132,21 +178,20 @@
   return gradient;
 };
 
-// 차트 업데이트
-const updateChart = () => {
-  if (selectedImage.value.src === saving1) {
-    chartData.value = { labels: [], datasets: [] };
-  } else {
-    const ctx = document.createElement("canvas").getContext("2d");
+  const updateChart = () => {
+    const selectedMember = memberPoints.find(
+      (member) => member.src === selectedImage.value.src
+    );
 
-    const createSolidColor = (color) => {
-      return color; // 단색으로 설정
-    };
+    if (!selectedMember) {
+      chartData.value = { labels: [], datasets: [] };
+      return;
+    }
 
-    const quizPoints = selectedImage.value.data.quiz;
-    const challengePoints = selectedImage.value.data.challenge;
-    const totalPoints = quizPoints.map((quiz, i) => quiz + challengePoints[i]);
+    const { quiz, challenge } = selectedMember.data;
+    const totalPoints = quiz.map((q, i) => q + challenge[i]);
 
+    // 포인트별 정렬
     const sortedIndices = totalPoints
       .map((value, index) => ({ value, index }))
       .sort((a, b) => b.value - a.value)
@@ -157,35 +202,46 @@ const updateChart = () => {
       datasets: [
         {
           label: "퀴즈 포인트",
-          data: sortedIndices.map((i) => quizPoints[i]),
-          backgroundColor: createSolidColor("rgba(0, 123, 255, 1)"), // 진한 파란색
+          data: sortedIndices.map((i) => quiz[i]),
+          backgroundColor: "rgba(54, 162, 235, 0.7)", // 파란색
         },
         {
           label: "챌린지 포인트",
-          data: sortedIndices.map((i) => challengePoints[i]),
-          backgroundColor: createSolidColor("rgba(40, 167, 69, 1)"), // 진한 초록색
+          data: sortedIndices.map((i) => challenge[i]),
+          backgroundColor: "rgba(75, 192, 192, 0.7)", // 초록색
         },
         {
           label: "통합 포인트",
           data: sortedIndices.map((i) => totalPoints[i]),
-          backgroundColor: createSolidColor("rgba(255, 193, 7, 1)"), // 진한 노란색
+          backgroundColor: "rgba(255, 206, 86, 0.7)", // 노란색
         },
       ],
     };
-  }
-};
+  };
+
   
   // 이전 슬라이드
   const prevSlide = () => {
-    currentIndex.value = (currentIndex.value - 1 + images.length) % images.length;
+    currentIndex.value = currentIndex.value - 1 + images.value.length % images.value.length;
+    console.log("prev slide : "+currentIndex.value);
     selectImage(currentIndex.value);
   };
   
   // 다음 슬라이드
   const nextSlide = () => {
-    currentIndex.value = (currentIndex.value + 1) % images.length;
+    currentIndex.value = (currentIndex.value + 1) % images.value.length;
+    console.log("next slide : "+currentIndex.value);
     selectImage(currentIndex.value);
   };
+
+
+    
+  onMounted(() => {
+    
+    fetchChallengeInfo();
+  
+  });
+
   </script>
   
   <style>

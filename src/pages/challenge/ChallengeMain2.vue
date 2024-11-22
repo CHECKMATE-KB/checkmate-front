@@ -2,8 +2,10 @@
   <div class="slider-container">
     <div
       class="slider"
-      :style="{ transform: `translateX(-${currentIndex * (100 / visibleSlides)}%)` }"
+      :style="{ transform: `translateX(-${currentIndex * (100 / visibleSlides)}%)`}"
     >
+
+  
       <div class="slide active">
         <img :src="saving1"/>
       </div>
@@ -63,12 +65,11 @@ const selectImage = (image) => {
     // saving1 이미지일 경우 아무 동작도 하지 않음
     return;
   }
-  router.push({ name: "ChallengeInfo", query: { src: image, alt: "challenge" } });
+  router.push({ name: "ChallengeInfo",  params: { teamNo: teamNo.value } });
 };
 
 const prevSlide = () => {
-  currentIndex.value =
-    (currentIndex.value - 1+ challenges.value.length) % challenges.value.length;
+  currentIndex.value =  (currentIndex.value - 1+ challenges.value.length) % challenges.value.length;
   
 };
 

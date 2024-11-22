@@ -4,7 +4,7 @@
     <div class="timer-bar">
       <div class="timer-progress" :style="{ width: timerWidth + '%' }"></div>
     </div>
-    <h1 class="question-text">Q2. 왼쪽 사진과 다른 곳을 3곳 클릭해주세요.</h1>
+    <h1 class="question-text">Q5. 왼쪽 사진과 다른 곳을 3곳 클릭해주세요.</h1>
 
     <div class="images">
       <img :src="currentImage1" alt="Image1.png" />
